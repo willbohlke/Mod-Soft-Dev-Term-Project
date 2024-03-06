@@ -229,7 +229,7 @@ class Eliza:
 
 def main():
     eliza = Eliza()
-    eliza.load('doctor.txt')
+    eliza.load('fruits.txt')
     eliza.run()
 
 if __name__ == '__main__':
