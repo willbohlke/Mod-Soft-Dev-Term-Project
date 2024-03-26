@@ -206,6 +206,8 @@ class Eliza:
 
         return " ".join(output)
 
+
+# old code
     def initial(self):
         return random.choice(self.initials)
 
@@ -225,7 +227,6 @@ class Eliza:
             print(output)
 
         print(self.final())
-
 
 def main():
     eliza = Eliza()
