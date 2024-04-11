@@ -5,23 +5,23 @@ import random
 nlp = spacy.load("en_core_web_sm")
 
 fruit_descriptions = {
-    "apple": ["sweet", "tart", "crisp", "green", "red"],
+    "apple": ["sweet", "sour", "crisp", "green", "red"],
     "mango": ["sweet", "soft", "tropical", "yellow", "orange", "red"],
     "banana": ["sweet", "creamy", "yellow"],
     "blueberry": ["sweet", "small", "purple", "blue"],
-    "blackberry": ["sweet", "tart", "small", "black", "blue"],
+    "blackberry": ["sweet", "small", "black", "blue"],
     "raspberry": ["sweet", "fuzzy", "small", "red"],
     "grape": ["sweet", "crisp", "small", "seedless", "purple", "green"],
     "watermelon": ["sweet", "crisp", "refreshing", "big", "red", "green", "pink"],
     "pear": ["sweet", "soft", "green"],
-    "plum": ["sweet", "tart", "soft", "small", "purple"],
+    "plum": ["sweet", "soft", "small", "purple"],
     "apricot": ["sweet", "soft", "fuzzy", "small", "orange"],
     "peach": ["sweet", "soft", "fuzzy", "pink", "orange"],
-    "kiwi": ["tart", "tropical", "fuzzy", "refreshing", "green"],
-    "pineapple": ["tart", "tropical", "refreshing", "yellow"],
-    "orange": ["tart", "citrusy", "orange"],
-    "lemon": ["tart", "sour", "citrusy", "refreshing", "yellow"],
-    "lime": ["tart", "sour", "citrusy", "refreshing", "green"]
+    "kiwi": ["sweet", "tropical", "fuzzy", "refreshing", "green"],
+    "pineapple": ["sour", "tropical", "refreshing", "yellow"],
+    "orange": ["sour", "citrusy", "orange"],
+    "lemon": ["sour", "citrusy", "refreshing", "yellow"],
+    "lime": ["sour", "citrusy", "refreshing", "green"]
 }
 
 # Function to extract descriptors from fruit descriptions
