@@ -31,14 +31,18 @@ fruit_descriptions = {
     "dragon fruit": ["sweet", "tropical", "seeds", "spiky", "medium" "pink", "green", "white"]
 }
 
-# Function to extract descriptors from fruit descriptions
 def extract_descriptors(fruit_descriptions):
     descriptors = set()
-    for description in fruit_descriptions.values():
+
+    for description_list in fruit_descriptions.values():
+        # Join the list of descriptions into a single string
+        description = ' '.join(description_list)
         doc = nlp(description)
+
         for token in doc:
-            if token.pos_ in ['ADJ', 'NOUN']:  # Considering adjectives and nouns as descriptors
-                descriptors.add(token.text.lower())
+            if token.pos_ in ['NOUN', 'ADJ']:
+                descriptors.add(token.lemma_)
+
     return list(descriptors)
 
 def analyze_response(response):
@@ -72,7 +76,12 @@ def guess_fruit():
     # First question to narrow down the possible fruits
     print("Think of a fruit and I'll try to guess it! Describe your fruit: ")
     response = input().strip().lower()
-    possible_fruits = [fruit for fruit in possible_fruits if descriptor in fruit_descriptions[fruit]]
+
+    # Process the user's response to extract descriptors
+    response_descriptors = extract_descriptors({'response': [response]})
+
+    # Filter the possible fruits based on the user's response
+    possible_fruits = [fruit for fruit in possible_fruits if any(descriptor in fruit_descriptions[fruit] for descriptor in response_descriptors)]
 
     while len(possible_fruits) > 1 and descriptors:
         descriptor = random.choice(descriptors)
