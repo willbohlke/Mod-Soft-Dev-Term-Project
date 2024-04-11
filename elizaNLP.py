@@ -63,8 +63,7 @@ def guess_fruit():
     questions = [
         "How does the fruit taste?",
         "Could you picture the size of the fruit? Is it small, medium, or large?",
-        "When you think of the fruit, does it remind you of any specific season or environment in which it's typically found?",
-        "When you envision the fruit, does it have any specific features like having seeds?",
+        "Does the fruit have any specific features like having seeds or a pit?",
         "In terms of its appearance, does the fruit have any unique shapes, such as round or long?",
         "Does it have any distinguishing factors such as having thorns, a stem, etc.?",
         "What family does the fruit belong to? E.g., melon, citrus.",
