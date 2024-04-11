@@ -7,8 +7,8 @@ nlp = spacy.load("en_core_web_sm")
 fruit_descriptions = {
     "apple": ["sweet", "sour", "crisp", "green", "red"],
     "mango": ["sweet", "soft", "tropical", "yellow", "orange", "red"],
-    "banana": ["sweet", "creamy", "yellow"],
-    "blueberry": ["sweet", "small", "purple", "blue"],
+    "banana": ["sweet", "creamy", "yellow", "long"],
+    "blueberry": ["sweet", "small", "blue"],
     "blackberry": ["sweet", "small", "black", "blue"],
     "raspberry": ["sweet", "fuzzy", "small", "red"],
     "grape": ["sweet", "crisp", "small", "seedless", "purple", "green"],
@@ -19,7 +19,7 @@ fruit_descriptions = {
     "peach": ["sweet", "soft", "fuzzy", "pink", "orange"],
     "kiwi": ["sweet", "tropical", "fuzzy", "refreshing", "green"],
     "pineapple": ["sour", "tropical", "refreshing", "yellow"],
-    "orange": ["sour", "citrusy", "orange"],
+    "orange": ["sour", "citrusy", "orange", "round"],
     "lemon": ["sour", "citrusy", "refreshing", "yellow"],
     "lime": ["sour", "citrusy", "refreshing", "green"]
 }
@@ -48,9 +48,25 @@ def guess_fruit():
     possible_fruits = list(fruit_descriptions.keys())
     descriptors = extract_descriptors(fruit_descriptions)
 
+    # First question to narrow down the possible fruits
+    print("Think of a fruit and I'll try to guess it! Describe your fruit: ")
+    response = input().strip().lower()
+    possible_fruits = [fruit for fruit in possible_fruits if descriptor in fruit_descriptions[fruit]]
+
     while len(possible_fruits) > 1 and descriptors:
         descriptor = random.choice(descriptors)
         descriptors.remove(descriptor)
+
+        # Determine if the descriptor is a noun or an adjective
+        doc = nlp(descriptor)
+        pos = doc[0].pos_  # Assuming the descriptor is a single word
+
+        if pos == 'NOUN':
+            print(f"The descriptor '{descriptor}' is a noun.")
+        elif pos == 'ADJ':
+            print(f"The descriptor '{descriptor}' is an adjective.")
+        else:
+            print(f"The descriptor '{descriptor}' is not a noun or an adjective.")
 
         question = f"Does the fruit you're thinking of have the characteristic of being {descriptor}?"
         print(question)
