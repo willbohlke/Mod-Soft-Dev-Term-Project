@@ -5,16 +5,23 @@ import random
 nlp = spacy.load("en_core_web_sm")
 
 fruit_descriptions = {
-    "apple": "A crunchy and sweet fruit that comes in colors ranging from green to red.",
-    "mango": "A tropical fruit with a sweet, juicy flesh and smooth, green to yellow skin.",
-    "banana": "A long, curved fruit with a yellow skin and soft, sweet flesh.",
-    "orange": "A round citrus fruit with a thick, orange skin and a sweet, juicy pulp.",
-    "kiwi": "A small, oval fruit with a brown, fuzzy skin and bright green flesh.",
-    "strawberry": "A small, red fruit with a sweet flavor and tiny seeds on its surface.",
-    "blueberry": "A small, round fruit with a dark blue skin and a sweet, juicy flesh.",
-    "grape": "A small, round fruit that grows in clusters and comes in green, red, or purple colors.",
-    "watermelon": "A large, round fruit with a green rind and sweet, pink flesh.",
-    "pineapple": "A tropical fruit with a spiky, golden skin and sweet, juicy flesh."
+    "apple": ["sweet", "tart", "crisp", "green", "red"],
+    "mango": ["sweet", "soft", "tropical", "yellow", "orange", "red"],
+    "banana": ["sweet", "creamy", "yellow"],
+    "blueberry": ["sweet", "small", "purple", "blue"],
+    "blackberry": ["sweet", "tart", "small", "black", "blue"],
+    "raspberry": ["sweet", "fuzzy", "small", "red"],
+    "grape": ["sweet", "crisp", "small", "seedless", "purple", "green"],
+    "watermelon": ["sweet", "crisp", "refreshing", "big", "red", "green", "pink"],
+    "pear": ["sweet", "soft", "green"],
+    "plum": ["sweet", "tart", "soft", "purple", "small"],
+    "apricot": ["sweet", "soft", "fuzzy", "orange", "small"],
+    "peach": ["sweet", "soft", "fuzzy", "pink", "orange"],
+    "kiwi": ["tart", "green", "tropical", "fuzzy", "refreshing"],
+    "pineapple": ["tart", "tropical", "refreshing", "yellow"],
+    "orange": ["tart", "citrusy", "zesty", "orange"],
+    "lemon": ["tart", "sour", "citrusy", "yellow", "refreshing"],
+    "lime": ["tart", "sour", "citrusy", "green", "refreshing"]
 }
 
 # Function to extract descriptors from fruit descriptions
