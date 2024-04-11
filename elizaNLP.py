@@ -5,23 +5,23 @@ import random
 nlp = spacy.load("en_core_web_sm")
 
 fruit_descriptions = {
-    "apple": ["sweet", "sour", "crisp", "green", "red"],
-    "mango": ["sweet", "soft", "tropical", "yellow", "orange", "red"],
-    "banana": ["sweet", "creamy", "yellow", "long"],
-    "blueberry": ["sweet", "small", "blue"],
-    "blackberry": ["sweet", "small", "black", "blue"],
-    "raspberry": ["sweet", "fuzzy", "small", "red"],
-    "grape": ["sweet", "crisp", "small", "seedless", "purple", "green"],
-    "watermelon": ["sweet", "crisp", "refreshing", "big", "red", "green", "pink"],
-    "pear": ["sweet", "soft", "green"],
-    "plum": ["sweet", "soft", "small", "purple"],
-    "apricot": ["sweet", "soft", "fuzzy", "small", "orange"],
-    "peach": ["sweet", "soft", "fuzzy", "pink", "orange"],
-    "kiwi": ["sweet", "tropical", "fuzzy", "refreshing", "green"],
-    "pineapple": ["sour", "tropical", "refreshing", "yellow"],
-    "orange": ["sour", "citrusy", "orange", "round"],
-    "lemon": ["sour", "citrusy", "refreshing", "yellow"],
-    "lime": ["sour", "citrusy", "refreshing", "green"]
+    "apple": ["sweet", "sour", "crisp", "green", "red", "medium", "round", "stem", "seeds"],
+    "mango": ["sweet", "soft", "tropical", "yellow", "medium", "orange", "red", "green", "round", "stem"],
+    "banana": ["sweet", "creamy", "yellow", "green", "medium", "long", "curved", "peel"],
+    "blueberry": ["sweet", "small", "blue", "berry", "tart"],
+    "blackberry": ["sweet", "small", "black", "blue", "berry", "thorns"],
+    "raspberry": ["sweet", "fuzzy", "small", "red", "thorns"],
+    "grape": ["sweet", "crisp", "small", "seedless", "purple", "green", "bunch", "round"],
+    "watermelon": ["sweet", "crisp", "refreshing", "big", "red", "green", "rind", "seeds", "round"],
+    "pear": ["sweet", "soft", "medium", "green", "yellow", "stem", "seeds", "round"],
+    "plum": ["sweet", "soft", "medium", "purple", "pit", "round"],
+    "apricot": ["sweet", "soft", "medium", "fuzzy", "orange", "pit", "round"],
+    "peach": ["sweet", "soft", "medium", "fuzzy", "pink", "orange", "pit", "round"],
+    "kiwi": ["sweet", "tropical", "fuzzy", "refreshing", "green", "brown", "seeds", "round"],
+    "pineapple": ["sour", "tropical", "refreshing", "seedless", "spiky", "big" "yellow"],
+    "orange": ["sour", "citrusy", "medium", "orange", "round", "stem", "seeds"],
+    "lemon": ["sour", "citrusy", "medium", "refreshing", "yellow", "round", "seeds"],
+    "lime": ["sour", "citrusy", "medium", "refreshing", "green", "round", "seeds"]
 }
 
 # Function to extract descriptors from fruit descriptions
