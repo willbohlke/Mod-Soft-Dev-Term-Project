@@ -15,36 +15,55 @@ fruits = [
 ]
 
 fruit_descriptions = {
-    "apple": "A crunchy and sweet fruit that comes in colors ranging from green to red. Often eaten raw or used in desserts.",
-    "banana": "A long, curved fruit with a yellow skin and soft, sweet flesh. Often eaten raw or used in baking.",
-    "orange": "A round citrus fruit with a bright orange skin and sweet, juicy flesh. Commonly eaten fresh or juiced.",
-    "mango": "A tropical fruit with a sweet, juicy flesh and smooth, green to yellow skin. Commonly eaten fresh or used in smoothies.",
-    "cherry": "A small, round fruit with a bright red or black skin and a sweet or tart taste. Often used in desserts or as a garnish.",
-    "grape": "A small, juicy fruit that comes in various colors and is often used to make wine or eaten as a snack.",
-    "lemon": "A sour citrus fruit with a yellow skin and acidic juice. Commonly used in cooking and for its refreshing flavor.",
-    "pineapple": "A tropical fruit with a spiky, rough skin and sweet, juicy flesh. Often used in desserts or as a topping.",
-    "strawberry": "A small, red fruit with a sweet and tangy flavor. Commonly used in desserts, jams, and as a topping.",
-    "blueberry": "A small, round fruit with a dark blue or purple skin and a sweet taste. Often used in baking or eaten as a snack.",
-    "raspberry": "A small, red fruit with a sweet and slightly tart taste. Commonly used in desserts, jams, and as a topping.",
-    "kiwi": "A small, oval fruit with a brown, fuzzy skin and green flesh. Known for its tangy and sweet flavor.",
-    "watermelon": "A large, juicy fruit with a green rind and sweet, red flesh. Often eaten fresh or used in fruit salads.",
-    "melon": "A large, round fruit with a smooth skin and sweet, juicy flesh. Commonly eaten fresh or used in fruit salads.",
-    "blackberry": "A small, dark purple fruit with a sweet and tart taste. Often used in desserts, jams, and as a topping.",
-    "pear": "A sweet and juicy fruit with a thin skin and a shape that varies from round to pear-shaped. Often eaten fresh or used in desserts.",
-    "peach": "A soft, juicy fruit with a fuzzy skin and a sweet, fragrant flavor. Commonly eaten fresh or used in desserts.",
-    "plum": "A small, round fruit with a smooth skin and a sweet or tart taste. Often eaten fresh or used in desserts.",
-    "fig": "A small, pear-shaped fruit with a thin skin and sweet, chewy flesh. Commonly eaten fresh or dried.",
-    "pomegranate": "A round fruit with a thick, leathery skin and juicy, ruby-red seeds. Known for its sweet and tart flavor.",
-    "coconut": "A large, brown fruit with a hard, hairy shell and sweet, creamy flesh. Commonly used in cooking and for its milk and oil.",
-    "lime": "A small, green citrus fruit with a sour and acidic taste. Commonly used in cooking and for its refreshing flavor.",
-    "apricot": "A small, orange fruit with a smooth skin and a sweet, slightly tart taste. Often eaten fresh or used in desserts.",
-    "dragon fruit": "A tropical fruit with a vibrant pink or yellow skin and white or red flesh speckled with black seeds. Known for its mild, sweet flavor.",
-    "nectarine": "A smooth-skinned fruit similar to a peach but with a firmer texture and a slightly tart taste. Often eaten fresh or used in desserts.",
-    "guava": "A tropical fruit with a green or yellow skin and sweet, juicy flesh. Commonly eaten fresh or used in jams and jellies.",
-    "lychee": "A small, round fruit with a rough, pinkish-red skin and sweet, translucent flesh. Often eaten fresh or used in desserts.",
-    "tangerine": "A small, citrus fruit with a bright orange skin and sweet, juicy flesh. Commonly eaten fresh or used in salads and desserts.",
-    "passion fruit": "A round or oval fruit with a thick, purple or yellow skin and a tart, tropical flavor. Often used in desserts and beverages."
+    "apple": ["sweet", "tart", "sour", "crisp", "green", "red", "medium", "round", "stem", "seeds"],
+    "mango": ["sweet", "soft", "tropical", "yellow", "medium", "orange", "red", "green", "round", "stem"],
+    "banana": ["sweet", "creamy", "yellow", "green", "medium", "long", "curved", "peel", "bunch", "tropical"],
+    "blueberry": ["sweet", "tart", "small", "blue", "berry"],
+    "blackberry": ["sweet", "tart", "small", "black", "blue", "berry", "thorns"],
+    "raspberry": ["sweet", "fuzzy", "small", "red", "thorns"],
+    "strawberry": ["sweet", "tart", "small", "red", "pink", "seeds", "stem"],
+    "cherry": ["sweet", "tart", "small", "red", "seeds", "stem", "bunch","round"],
+    "grape": ["sweet", "crisp", "small", "seedless", "purple", "green", "bunch", "round"],
+    "watermelon": ["sweet", "crisp", "refreshing", "big", "red", "green", "a rind", "seeds", "round", "melon"],
+    "honeydew melon": ["sweet", "soft", "refreshing", "big", "green", "a rind", "seeds", "round", "melon"],
+    "cantaloupe": ["sweet", "soft", "refreshing", "big", "orange", "a rind", "seeds", "round", "melon"],
+    "pear": ["sweet", "tart", "soft", "medium", "green", "yellow", "stem", "seeds", "round"],
+    "plum": ["sweet", "tart", "soft", "medium", "purple", "a pit", "round"],
+    "apricot": ["sweet", "soft", "medium", "fuzzy", "orange", "a pit", "round"],
+    "peach": ["sweet", "soft", "medium", "fuzzy", "pink", "orange", "a pit", "round"],
+    "kiwi": ["sweet", "tropical", "fuzzy", "refreshing", "green", "brown", "seeds", "round"],
+    "pomegranate": ["sweet", "tart", "tropical", "medium", "red", "pink", "seeds", "round"],
+    "pineapple": ["sweet", "tart", "tropical", "refreshing", "seedless", "spiky", "big", "yellow"],
+    "orange": ["sweet", "tart", "sour", "citrus", "medium", "orange", "round", "stem", "seeds"],
+    "grapefruit": ["sour", "tart", "citrus", "medium", "orange", "pink", "round", "stem", "seeds"],
+    "lemon": ["sour", "tart", "citrus", "medium", "refreshing", "yellow", "round", "seeds"],
+    "lime": ["sour", "tart", "citrus", "medium", "refreshing", "green", "round", "seeds"],
+    "dragon fruit": ["sweet", "tropical", "seeds", "spiky", "medium", "pink", "green", "white"]
 }
+# apple, mango, banana, blueberry, blackberry, raspberry, strawberry, cherry, grape, watermelon, honeydew melon, cantaloupe, pear, plum, apricot, peach, kiwi, pomegranate, pineapple, orange, grapefruit, lemon, lime, dragon fruit
+
+def extract_descriptors(fruit_descriptions):
+    descriptors = set()
+
+    for description_list in fruit_descriptions.values():
+        # Join the list of descriptions into a single string
+        description = ' '.join(description_list)
+        doc = nlp(description)
+
+        for token in doc:
+            if token.pos_ in ['NOUN', 'ADJ']:
+                descriptors.add(token.lemma_)
+
+    return list(descriptors)
+
+def analyze_response(response):
+    doc = nlp(response)
+    
+    affirmative = any(token.lemma_ in ["yes", "affirmative", "indeed", "absolutely", "certainly", "sure", "definitely", "of course", "yeah", "yep", "yup", "aye", "roger", "uh-huh", "right", "okay", "agreed", "true", "yea", "correct", "alright", "amen", "positively", "undoubtedly", "yah", "yass", "exactly", "naturally", "precisely", "assuredly", "aha", "agreed", "granted", "undoubtedly", "unquestionably", "yesh"] for token in doc)
+    negative = any(token.lemma_ in ["no", "negative", "nay", "nope", "nah", "no way", "not", "never", "nix", "uh-uh", "nope", "not at all", "absolutely not", "by no means", "not a chance", "decline", "refuse", "reject", "deny", "veto", "rebuff", "renounce", "repudiate", "retract", "revoke", "withdraw", "non", "none", "nothing", "nowhere", "neither", "null", "void", "zero"] for token in doc)
+    unsure = any(token.lemma_ in ["unsure", "maybe", "perhaps", "possibly", "probably", "doubtful", "dubious", "questionable", "uncertain", "undecided", "undetermined", "don't know", "dont know", "idk"] for token in doc)
+
+    return affirmative, negative, unsure
 
 def guess_fruit():
     possible_fruits = list(fruit_descriptions.keys())
@@ -56,13 +75,50 @@ def guess_fruit():
         # Filter possible fruits based on the clue/description
         possible_fruits = [fruit for fruit in possible_fruits if any(keyword in fruit_descriptions[fruit] for keyword in keywords)]
 
-        if len(possible_fruits) > 1:
-            print(f"Possible fruits: {possible_fruits}")
-            # Here you can implement logic to ask questions based on the remaining fruits
-            # For example, if most remaining fruits are red, ask if the fruit is red
+    while len(possible_fruits) > 1 and descriptors:
+        descriptor = random.choice(descriptors)
+        descriptors.remove(descriptor)
 
-    return possible_fruits[0] if possible_fruits else "I couldn't guess the fruit."
+        # Determine if the descriptor is a noun or an adjective
+        doc = nlp(descriptor)
+        pos = doc[0].pos_  # Assuming the descriptor is a single word
+
+        question = ""
+        if pos == 'NOUN':
+            print(f"The descriptor '{descriptor}' is a noun.")
+            question = f"> Does the fruit you're thinking of {descriptor}?"
+        elif pos == 'ADJ':
+            print(f"The descriptor '{descriptor}' is an adjective.")
+            question = f"> Is the fruit you're thinking of {descriptor}?"
+        else:
+            print(f"The descriptor '{descriptor}' is not a noun or an adjective.")
+
+
+        print(question)
+        response = input().strip().lower()
+        affirmative, negative, unsure = analyze_response(response)
+
+        if affirmative:
+            possible_fruits = [fruit for fruit in possible_fruits if descriptor in fruit_descriptions[fruit]]
+        elif negative:
+            possible_fruits = [fruit for fruit in possible_fruits if descriptor not in fruit_descriptions[fruit]]
+        elif unsure:
+            print("> Ok, let's try another one.")
+
+    return f"> Is it a {possible_fruits[0]}?" if possible_fruits else "> I couldn't guess the fruit."
 
 # Start the game
 fruit_guess = guess_fruit()
-print(f"My guess is: {fruit_guess}")
+print(fruit_guess)
+
+# Analyze the user's response
+response = input().strip().lower()
+affirmative, negative, unsure = analyze_response(response)
+
+# Check the user's response
+if affirmative:
+    print("> Yay! Thank you for playing.")
+elif negative:
+    print("Oh well. Good game!")
+elif unsure:
+    print("Let's try another one.")
