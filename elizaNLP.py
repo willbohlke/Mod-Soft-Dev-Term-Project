@@ -50,7 +50,6 @@ def analyze_response(response):
     doc = nlp(response)
     
     affirmative = any(token.lemma_ in ["yes", "affirmative", "indeed", "absolutely", "certainly", "sure", "definitely", "of course", "yeah", "yep", "yup", "aye", "roger", "uh-huh", "right", "okay", "agreed", "true", "yea", "correct", "alright", "amen", "positively", "undoubtedly", "yah", "yass", "exactly", "naturally", "precisely", "assuredly", "aha", "agreed", "granted", "undoubtedly", "unquestionably", "yesh"] for token in doc)
-
     negative = any(token.lemma_ in ["no", "negative", "nay", "nope", "nah", "no way", "not", "never", "nix", "uh-uh", "nope", "not at all", "absolutely not", "by no means", "not a chance", "decline", "refuse", "reject", "deny", "veto", "rebuff", "renounce", "repudiate", "retract", "revoke", "withdraw", "non", "none", "nothing", "nowhere", "neither", "null", "void", "zero"] for token in doc)
     unsure = any(token.lemma_ in ["unsure", "maybe", "perhaps", "possibly", "probably", "doubtful", "dubious", "questionable", "uncertain", "undecided", "undetermined", "don't know", "dont know", "idk"] for token in doc)
 
@@ -90,6 +89,7 @@ def guess_fruit():
         doc = nlp(descriptor)
         pos = doc[0].pos_  # Assuming the descriptor is a single word
 
+        question = ""
         if pos == 'NOUN':
             print(f"The descriptor '{descriptor}' is a noun.")
             question = f"> Does the fruit you're thinking of {descriptor}?"
@@ -101,17 +101,17 @@ def guess_fruit():
 
         print(question)
         response = input().strip().lower()
-        affirmative, negative = analyze_response(response)
+        affirmative, negative, unsure = analyze_response(response)
 
         if affirmative:
             possible_fruits = [fruit for fruit in possible_fruits if descriptor in fruit_descriptions[fruit]]
         elif negative:
             possible_fruits = [fruit for fruit in possible_fruits if descriptor not in fruit_descriptions[fruit]]
-        else:
+        elif unsure:
             print("> Ok, let's try another one.")
 
-    return possible_fruits[0] if possible_fruits else "> I couldn't guess the fruit."
+    return f"> Is it a {possible_fruits[0]}?" if possible_fruits else "> I couldn't guess the fruit."
 
 # Start the game
 fruit_guess = guess_fruit()
-print(f"> Is it a {fruit_guess}?")
+print(fruit_guess)
