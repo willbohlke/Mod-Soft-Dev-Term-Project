@@ -5,30 +5,30 @@ import random
 nlp = spacy.load("en_core_web_sm")
 
 fruit_descriptions = {
-    "apple": ["sweet", "tart", "sour", "crisp", "green", "red", "medium", "round", "stem", "seeds"],
+    "apple": ["sweet", "tart", "sour", "crisp", "green", "red", "medium", "round", "stem", "seed"],
     "mango": ["sweet", "soft", "tropical", "yellow", "medium", "orange", "red", "green", "round", "stem"],
     "banana": ["sweet", "creamy", "yellow", "green", "medium", "long", "curved", "peel", "bunch", "tropical"],
     "blueberry": ["sweet", "tart", "small", "blue", "berry"],
     "blackberry": ["sweet", "tart", "small", "black", "blue", "berry", "thorns"],
     "raspberry": ["sweet", "fuzzy", "small", "red", "thorns"],
-    "strawberry": ["sweet", "tart", "small", "red", "pink", "seeds", "stem"],
-    "cherry": ["sweet", "tart", "small", "red", "seeds", "stem", "bunch","round"],
+    "strawberry": ["sweet", "tart", "small", "red", "pink", "seed", "stem"],
+    "cherry": ["sweet", "tart", "small", "red", "seed", "stem", "bunch","round"],
     "grape": ["sweet", "crisp", "small", "seedless", "purple", "green", "bunch", "round"],
-    "watermelon": ["sweet", "crisp", "refreshing", "big", "red", "green", "a rind", "seeds", "round", "melon"],
-    "honeydew melon": ["sweet", "soft", "refreshing", "big", "green", "a rind", "seeds", "round", "melon"],
-    "cantaloupe": ["sweet", "soft", "refreshing", "big", "orange", "a rind", "seeds", "round", "melon"],
-    "pear": ["sweet", "tart", "soft", "medium", "green", "yellow", "stem", "seeds", "round"],
-    "plum": ["sweet", "tart", "soft", "medium", "purple", "a pit", "round"],
-    "apricot": ["sweet", "soft", "medium", "fuzzy", "orange", "a pit", "round"],
-    "peach": ["sweet", "soft", "medium", "fuzzy", "pink", "orange", "a pit", "round"],
-    "kiwi": ["sweet", "tropical", "fuzzy", "refreshing", "green", "brown", "seeds", "round"],
-    "pomegranate": ["sweet", "tart", "tropical", "medium", "red", "pink", "seeds", "round"],
+    "watermelon": ["sweet", "crisp", "refreshing", "big", "red", "green", "rind", "seed", "round", "melon"],
+    "honeydew melon": ["sweet", "soft", "refreshing", "big", "green", "rind", "seed", "round", "melon"],
+    "cantaloupe": ["sweet", "soft", "refreshing", "big", "orange", "rind", "seed", "round", "melon"],
+    "pear": ["sweet", "tart", "soft", "medium", "green", "yellow", "stem", "seed", "round"],
+    "plum": ["sweet", "tart", "soft", "medium", "purple", "pit", "round"],
+    "apricot": ["sweet", "soft", "medium", "fuzzy", "orange", "pit", "round"],
+    "peach": ["sweet", "soft", "medium", "fuzzy", "pink", "orange", "pit", "round"],
+    "kiwi": ["sweet", "tropical", "fuzzy", "refreshing", "green", "brown", "seed", "round"],
+    "pomegranate": ["sweet", "tart", "tropical", "medium", "red", "pink", "seed", "round"],
     "pineapple": ["sweet", "tart", "tropical", "refreshing", "seedless", "spiky", "big", "yellow"],
-    "orange": ["sweet", "tart", "sour", "citrus", "medium", "orange", "round", "stem", "seeds"],
-    "grapefruit": ["sour", "tart", "citrus", "medium", "orange", "pink", "round", "stem", "seeds"],
-    "lemon": ["sour", "tart", "citrus", "medium", "refreshing", "yellow", "round", "seeds"],
-    "lime": ["sour", "tart", "citrus", "medium", "refreshing", "green", "round", "seeds"],
-    "dragon fruit": ["sweet", "tropical", "seeds", "spiky", "medium", "pink", "green", "white"]
+    "orange": ["sweet", "tart", "sour", "citrus", "medium", "orange", "round", "stem", "seed"],
+    "grapefruit": ["sour", "tart", "citrus", "medium", "orange", "pink", "round", "stem", "seed"],
+    "lemon": ["sour", "tart", "citrus", "medium", "refreshing", "yellow", "round", "seed"],
+    "lime": ["sour", "tart", "citrus", "medium", "refreshing", "green", "round", "seed"],
+    "dragon fruit": ["sweet", "tropical", "seed", "spiky", "medium", "pink", "green", "white"]
 }
 # apple, mango, banana, blueberry, blackberry, raspberry, strawberry, cherry, grape, watermelon, honeydew melon, cantaloupe, pear, plum, apricot, peach, kiwi, pomegranate, pineapple, orange, grapefruit, lemon, lime, dragon fruit
 
@@ -80,6 +80,9 @@ def guess_fruit():
 
     # Filter the possible fruits based on the user's response
     possible_fruits = [fruit for fruit in possible_fruits if any(descriptor in fruit_descriptions[fruit] for descriptor in response_descriptors)]
+    
+    for descriptor in response_descriptors:
+        descriptors.remove(descriptor)
 
     while len(possible_fruits) > 1 and descriptors:
         descriptor = random.choice(descriptors)
@@ -115,3 +118,15 @@ def guess_fruit():
 # Start the game
 fruit_guess = guess_fruit()
 print(fruit_guess)
+
+# Analyze the user's response
+response = input().strip().lower()
+affirmative, negative, unsure = analyze_response(response)
+
+# Check the user's response
+if affirmative:
+    print("> Yay! Thank you for playing.")
+elif negative:
+    print("> Oh well. Good game!")
+elif unsure:
+    print("> Let's try another one.")
