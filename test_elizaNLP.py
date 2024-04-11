@@ -72,6 +72,6 @@ def guess_fruit():
 
 
 # Start the game (only runs if this script is directly executed, not during testing)
-if __name__ = "__main__":
+if __name__ == "__main__":
     fruit_guess = guess_fruit()
     print(f"My guess is: {fruit_guess}")
