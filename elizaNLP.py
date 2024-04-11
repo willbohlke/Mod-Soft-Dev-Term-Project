@@ -14,14 +14,14 @@ fruit_descriptions = {
     "grape": ["sweet", "crisp", "small", "seedless", "purple", "green"],
     "watermelon": ["sweet", "crisp", "refreshing", "big", "red", "green", "pink"],
     "pear": ["sweet", "soft", "green"],
-    "plum": ["sweet", "tart", "soft", "purple", "small"],
-    "apricot": ["sweet", "soft", "fuzzy", "orange", "small"],
+    "plum": ["sweet", "tart", "soft", "small", "purple"],
+    "apricot": ["sweet", "soft", "fuzzy", "small", "orange"],
     "peach": ["sweet", "soft", "fuzzy", "pink", "orange"],
-    "kiwi": ["tart", "green", "tropical", "fuzzy", "refreshing"],
+    "kiwi": ["tart", "tropical", "fuzzy", "refreshing", "green"],
     "pineapple": ["tart", "tropical", "refreshing", "yellow"],
-    "orange": ["tart", "citrusy", "zesty", "orange"],
-    "lemon": ["tart", "sour", "citrusy", "yellow", "refreshing"],
-    "lime": ["tart", "sour", "citrusy", "green", "refreshing"]
+    "orange": ["tart", "citrusy", "orange"],
+    "lemon": ["tart", "sour", "citrusy", "refreshing", "yellow"],
+    "lime": ["tart", "sour", "citrusy", "refreshing", "green"]
 }
 
 # Function to extract descriptors from fruit descriptions
