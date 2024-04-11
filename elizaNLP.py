@@ -4,7 +4,6 @@ import random
 # Load the spaCy English language model
 nlp = spacy.load("en_core_web_sm")
 
-# Example fruit_descriptions, you should replace this with your actual data
 fruit_descriptions = {
     "apple": "A crunchy and sweet fruit that comes in colors ranging from green to red.",
     "mango": "A tropical fruit with a sweet, juicy flesh and smooth, green to yellow skin.",
@@ -30,8 +29,12 @@ def extract_descriptors(fruit_descriptions):
 
 def analyze_response(response):
     doc = nlp(response)
-    affirmative = any(token.lemma_ in ["yes", "correct", "right", "true", "affirmative"] for token in doc)
-    negative = any(token.lemma_ in ["no", "wrong", "false", "negative", "not"] for token in doc)
+    
+    affirmative = any(token.lemma_ in ["yes", "affirmative", "indeed", "absolutely", "certainly", "sure", "definitely", "of course", "yeah", "yep", "yup", "aye", "roger", "uh-huh", "right", "okay", "agreed", "true", "yea", "correct", "alright", "amen", "positively", "undoubtedly", "yah", "yass", "exactly", "naturally", "precisely", "assuredly", "aha", "agreed", "granted", "undoubtedly", "unquestionably", "yesh"] for token in doc)
+
+    negative = any(token.lemma_ in ["no", "negative", "nay", "nope", "nah", "no way", "not", "never", "nix", "uh-uh", "nope", "not at all", "absolutely not", "by no means", "not a chance", "decline", "refuse", "reject", "deny", "veto", "rebuff", "renounce", "repudiate", "retract", "revoke", "withdraw", "non", "none", "nothing", "nowhere", 
+    "neither", "null", "void", "zero"] for token in doc)
+
     return affirmative, negative
 
 def guess_fruit():
@@ -58,4 +61,4 @@ def guess_fruit():
 
 # Start the game
 fruit_guess = guess_fruit()
-print(f"My guess is: {fruit_guess}")
+print(f"Is it a {fruit_guess}?")
