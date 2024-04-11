@@ -8,3 +8,7 @@ Requirements:
 pip install spacy
 python -m spacy download en_core_web_sm
 ```
+- pytest
+```python
+pip install pytest
+```
