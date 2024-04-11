@@ -5,23 +5,30 @@ import random
 nlp = spacy.load("en_core_web_sm")
 
 fruit_descriptions = {
-    "apple": ["sweet", "sour", "crisp", "green", "red"],
-    "mango": ["sweet", "soft", "tropical", "yellow", "orange", "red"],
-    "banana": ["sweet", "creamy", "yellow", "long"],
-    "blueberry": ["sweet", "small", "blue"],
-    "blackberry": ["sweet", "small", "black", "blue"],
-    "raspberry": ["sweet", "fuzzy", "small", "red"],
-    "grape": ["sweet", "crisp", "small", "seedless", "purple", "green"],
-    "watermelon": ["sweet", "crisp", "refreshing", "big", "red", "green", "pink"],
-    "pear": ["sweet", "soft", "green"],
-    "plum": ["sweet", "soft", "small", "purple"],
-    "apricot": ["sweet", "soft", "fuzzy", "small", "orange"],
-    "peach": ["sweet", "soft", "fuzzy", "pink", "orange"],
-    "kiwi": ["sweet", "tropical", "fuzzy", "refreshing", "green"],
-    "pineapple": ["sour", "tropical", "refreshing", "yellow"],
-    "orange": ["sour", "citrusy", "orange", "round"],
-    "lemon": ["sour", "citrusy", "refreshing", "yellow"],
-    "lime": ["sour", "citrusy", "refreshing", "green"]
+    "apple": ["sweet", "sour", "crisp", "green", "red", "medium", "round", "stem", "seeds"],
+    "mango": ["sweet", "soft", "tropical", "yellow", "medium", "orange", "red", "green", "round", "stem"],
+    "banana": ["sweet", "creamy", "yellow", "green", "medium", "long", "curved", "peel", "bunch"],
+    "blueberry": ["sweet", "small", "blue", "berry", "tart"],
+    "blackberry": ["sweet", "small", "black", "blue", "berry", "thorns"],
+    "raspberry": ["sweet", "fuzzy", "small", "red", "thorns"],
+    "strawberry": ["sweet", "small", "red", "pink", "seeds", "stem"],
+    "cherry": ["sweet", "small", "red", "seeds", "stem", "bunch", "tart", "round"],
+    "grape": ["sweet", "crisp", "small", "seedless", "purple", "green", "bunch", "round"],
+    "watermelon": ["sweet", "crisp", "refreshing", "big", "red", "green", "rind", "seeds", "round", "melon"],
+    "honeydew melon": ["sweet", "soft", "refreshing", "big", "green", "rind", "seeds", "round", "melon"],
+    "cantaloupe": ["sweet", "soft", "refreshing", "big", "orange", "rind", "seeds", "round", "melon"],
+    "pear": ["sweet", "soft", "medium", "green", "yellow", "stem", "seeds", "round"],
+    "plum": ["sweet", "soft", "medium", "purple", "pit", "round"],
+    "apricot": ["sweet", "soft", "medium", "fuzzy", "orange", "pit", "round"],
+    "peach": ["sweet", "soft", "medium", "fuzzy", "pink", "orange", "pit", "round"],
+    "kiwi": ["sweet", "tropical", "fuzzy", "refreshing", "green", "brown", "seeds", "round"],
+    "pomegranate": ["sweet", "tart", "tropical", "medium", "red", "pink", "seeds", "round"],
+    "pineapple": ["sour", "tropical", "refreshing", "seedless", "spiky", "big" "yellow"],
+    "orange": ["sour", "citrusy", "medium", "orange", "round", "stem", "seeds"],
+    "grapefruit": ["sour", "citrusy", "medium", "orange", "pink", "round", "stem", "seeds"],
+    "lemon": ["sour", "citrusy", "medium", "refreshing", "yellow", "round", "seeds"],
+    "lime": ["sour", "citrusy", "medium", "refreshing", "green", "round", "seeds"],
+    "dragon fruit": ["sweet", "tropical", "seeds", "spiky", "medium" "pink", "green", "white"]
 }
 
 # Function to extract descriptors from fruit descriptions
@@ -47,6 +54,20 @@ def analyze_response(response):
 def guess_fruit():
     possible_fruits = list(fruit_descriptions.keys())
     descriptors = extract_descriptors(fruit_descriptions)
+       # Additional questions
+    questions = [
+        "How does the fruit taste?",
+        "Could you picture the size of the fruit? Is it small, medium, or large?",
+        "When you think of the fruit, does it remind you of any specific season or environment in which it's typically found?",
+        "When you envision the fruit, does it have any specific features like having seeds?",
+        "In terms of its appearance, does the fruit have any unique shapes, such as round or long?",
+        "How would you describe the inside texture?",
+        "Does it have any distinguishing factors such as having thorns, a stem, etc.?",
+        "What family does the fruit belong to? E.g., melon, citrus.",
+        "What color is the inside of the fruit?",
+        "How is the texture of the fruit when you bite into it?"
+        "What is the hardness of the fruit?"
+    ]
 
     # First question to narrow down the possible fruits
     print("Think of a fruit and I'll try to guess it! Describe your fruit: ")
