@@ -35,10 +35,11 @@ fruit_descriptions = {
 def extract_descriptors(fruit_descriptions):
     descriptors = set()
     for description in fruit_descriptions.values():
-        doc = nlp(description)
-        for token in doc:
-            if token.pos_ in ['ADJ', 'NOUN']:  # Considering adjectives and nouns as descriptors
-                descriptors.add(token.text.lower())
+        for description in descriptions_list:
+            doc = nlp(description)
+            for token in doc:
+                if token.pos_ in ['ADJ', 'NOUN']:  # Considering adjectives and nouns as descriptors
+                    descriptors.add(token.text.lower())
     return list(descriptors)
 
 def analyze_response(response):
