@@ -1,18 +1,8 @@
-# NOTE: refer to the README.md for the instructions on how to install the spaCy library
-
 import spacy
+import random
 
 # Load the spaCy English language model
 nlp = spacy.load("en_core_web_sm")
-
-# List of fruits for the game
-fruits = [
-    "apple", "banana", "cherry", "grape", "orange", "mango", "lemon",
-    "pineapple", "strawberry", "blueberry", "raspberry", "kiwi",
-    "watermelon", "melon", "blackberry", "pear", "peach", "plum",
-    "fig", "pomegranate", "coconut", "lime", "apricot", "dragon fruit",
-    "nectarine", "guava", "lychee", "tangerine", "passion fruit"
-]
 
 fruit_descriptions = {
     "apple": ["sweet", "tart", "sour", "crisp", "green", "red", "medium", "round", "stem", "seeds"],
@@ -67,13 +57,29 @@ def analyze_response(response):
 
 def guess_fruit():
     possible_fruits = list(fruit_descriptions.keys())
-    while len(possible_fruits) > 1:
-        clue = input("Describe the fruit or answer the question: ")
-        doc = nlp(clue)
-        keywords = [token.text.lower() for token in doc if token.is_alpha and not token.is_stop]
+    descriptors = extract_descriptors(fruit_descriptions)
+       # Additional questions
+    questions = [
+        "How does the fruit taste?",
+        "Could you picture the size of the fruit? Is it small, medium, or large?",
+        "Does the fruit have any specific features like having seeds or a pit?",
+        "In terms of its appearance, does the fruit have any unique shapes, such as round or long?",
+        "Does it have any distinguishing factors such as having thorns, a stem, etc.?",
+        "What family does the fruit belong to? E.g., melon, citrus.",
+        "What color is the inside of the fruit?",
+        "How is the texture of the fruit when you bite into it?"
+        "What is the hardness of the fruit?"
+    ]
 
-        # Filter possible fruits based on the clue/description
-        possible_fruits = [fruit for fruit in possible_fruits if any(keyword in fruit_descriptions[fruit] for keyword in keywords)]
+    # First question to narrow down the possible fruits
+    print("> Think of a fruit and I'll try to guess it! Describe your fruit: ")
+    response = input().strip().lower()
+
+    # Process the user's response to extract descriptors
+    response_descriptors = extract_descriptors({'response': [response]})
+
+    # Filter the possible fruits based on the user's response
+    possible_fruits = [fruit for fruit in possible_fruits if any(descriptor in fruit_descriptions[fruit] for descriptor in response_descriptors)]
 
     while len(possible_fruits) > 1 and descriptors:
         descriptor = random.choice(descriptors)
@@ -93,7 +99,6 @@ def guess_fruit():
         else:
             print(f"The descriptor '{descriptor}' is not a noun or an adjective.")
 
-
         print(question)
         response = input().strip().lower()
         affirmative, negative, unsure = analyze_response(response)
@@ -110,15 +115,3 @@ def guess_fruit():
 # Start the game
 fruit_guess = guess_fruit()
 print(fruit_guess)
-
-# Analyze the user's response
-response = input().strip().lower()
-affirmative, negative, unsure = analyze_response(response)
-
-# Check the user's response
-if affirmative:
-    print("> Yay! Thank you for playing.")
-elif negative:
-    print("Oh well. Good game!")
-elif unsure:
-    print("Let's try another one.")
