@@ -54,7 +54,9 @@ def analyze_response(response):
     negative = any(token.lemma_ in ["no", "negative", "nay", "nope", "nah", "no way", "not", "never", "nix", "uh-uh", "nope", "not at all", "absolutely not", "by no means", "not a chance", "decline", "refuse", "reject", "deny", "veto", "rebuff", "renounce", "repudiate", "retract", "revoke", "withdraw", "non", "none", "nothing", "nowhere", 
     "neither", "null", "void", "zero"] for token in doc)
 
-    return affirmative, negative
+    unsure = any(token.lemma_ in ["unsure", "maybe", "perhaps", "possibly", "probably", "doubtful", "dubious", "questionable", "uncertain", "undecided", "undetermined", "don't know", "dont know", "idk"] for token in doc)
+
+    return affirmative, negative, unsure
 
 def guess_fruit():
     possible_fruits = list(fruit_descriptions.keys())
@@ -74,7 +76,7 @@ def guess_fruit():
     ]
 
     # First question to narrow down the possible fruits
-    print("Think of a fruit and I'll try to guess it! Describe your fruit: ")
+    print("> Think of a fruit and I'll try to guess it! Describe your fruit: ")
     response = input().strip().lower()
 
     # Process the user's response to extract descriptors
@@ -93,12 +95,13 @@ def guess_fruit():
 
         if pos == 'NOUN':
             print(f"The descriptor '{descriptor}' is a noun.")
+            question = f"> Does the fruit you're thinking of {descriptor}?"
         elif pos == 'ADJ':
             print(f"The descriptor '{descriptor}' is an adjective.")
+            question = f"> Is the fruit you're thinking of {descriptor}?"
         else:
             print(f"The descriptor '{descriptor}' is not a noun or an adjective.")
 
-        question = f"Does the fruit you're thinking of have the characteristic of being {descriptor}?"
         print(question)
         response = input().strip().lower()
         affirmative, negative = analyze_response(response)
@@ -108,10 +111,10 @@ def guess_fruit():
         elif negative:
             possible_fruits = [fruit for fruit in possible_fruits if descriptor not in fruit_descriptions[fruit]]
         else:
-            print("Sorry, I didn't understand that. Let's try another one.")
+            print("> Ok, let's try another one.")
 
-    return possible_fruits[0] if possible_fruits else "I couldn't guess the fruit."
+    return possible_fruits[0] if possible_fruits else "> I couldn't guess the fruit."
 
 # Start the game
 fruit_guess = guess_fruit()
-print(f"Is it a {fruit_guess}?")
+print(f"> Is it a {fruit_guess}?")
