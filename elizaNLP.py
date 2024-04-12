@@ -7,7 +7,7 @@ nlp = spacy.load("en_core_web_sm")
 fruit_descriptions = {
     "apple": ["sweet", "tart", "sour", "crisp", "green", "red", "medium", "round", "stem", "seed"],
     "mango": ["sweet", "soft", "tropical", "yellow", "medium", "orange", "red", "green", "round", "stem"],
-    "banana": ["sweet", "creamy", "yellow", "green", "medium", "long", "curved", "peel", "bunch", "tropical"],
+    "banana": ["sweet", "creamy", "seedless" "yellow", "green", "medium", "long", "curved", "peel", "bunch", "tropical"],
     "blueberry": ["sweet", "tart", "small", "blue", "berry"],
     "blackberry": ["sweet", "tart", "small", "black", "blue", "berry", "thorns"],
     "raspberry": ["sweet", "fuzzy", "small", "red", "thorns"],
@@ -36,15 +36,14 @@ def extract_descriptors(fruit_descriptions):
     descriptors = set()
 
     for description_list in fruit_descriptions.values():
-        # Join the list of descriptions into a single string
-        description = ' '.join(description_list)
-        doc = nlp(description)
-
-        for token in doc:
-            if token.pos_ in ['NOUN', 'ADJ']:
-                descriptors.add(token.lemma_)
+        for description in description_list:
+            doc = nlp(description)
+            for token in doc:
+                if token.pos_ in ['NOUN', 'ADJ']:
+                    descriptors.add(token.lemma_)
 
     return list(descriptors)
+
 
 def analyze_response(response):
     doc = nlp(response)
@@ -58,7 +57,8 @@ def analyze_response(response):
 def guess_fruit():
     possible_fruits = list(fruit_descriptions.keys())
     descriptors = extract_descriptors(fruit_descriptions)
-       # Additional questions
+    
+    # Additional questions
     questions = [
         "How does the fruit taste?",
         "Could you picture the size of the fruit? Is it small, medium, or large?",
@@ -79,8 +79,10 @@ def guess_fruit():
     response_descriptors = extract_descriptors({'response': [response]})
 
     # Filter the possible fruits based on the user's response
-    possible_fruits = [fruit for fruit in possible_fruits if any(descriptor in fruit_descriptions[fruit] for descriptor in response_descriptors)]
-    
+    for fruit in possible_fruits[:]:
+        if not all(descriptor in fruit_descriptions[fruit] for descriptor in response_descriptors):
+            possible_fruits.remove(fruit)
+
     for descriptor in response_descriptors:
         descriptors.remove(descriptor)
 
