@@ -62,14 +62,16 @@ def guess_fruit():
     questions = [
         "How does the fruit taste?",
         "Can you estimate the fruit's size? Would you describe it as small, medium, or large?",
-        "Does the fruit possess any distinctive traits, such as seeds or a pit?"
+        "Does the fruit possess any distinctive traits, such as seeds or a pit?",
         "In terms of its appearance, does the fruit have any unique shapes, such as round or long?",
         "Are there any notable characteristics, such as thorns or a prominent stem, associated with the fruit?",
         "To which botanical family does the fruit belong? For example, is it classified as a melon or citrus?",
         "What color is the inside of the fruit?",
         "How would you describe the texture of the fruit upon biting into it?",
         "What level of firmness does the fruit possess?",
-        "Does the fruit require peeling before consumption, or can it be bitten into directly?"
+        "Does the fruit require peeling before consumption, or can it be bitten into directly?",
+        "Does the fruit have any distinct aroma or fragrance?",
+        "What kind of climate is typically associated with the region where this fruit is grown?"
     ]
 
     # First question to narrow down the possible fruits
