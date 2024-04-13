@@ -1,50 +1,82 @@
-from tkinter import*
-import customtkinter
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QLineEdit, QHBoxLayout, QGraphicsOpacityEffect
+from PyQt5.QtCore import Qt, QPropertyAnimation
 
 
-root = customtkinter.CTk()
-root.geometry('1600x1200')
-root.title('Fruit Guesser')
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Fruit Guesser")
+        self.setGeometry(100, 100, 600, 400)
 
-def start_game():
-    # Function to transition to the game page
-    start_frame.pack_forget()  # Hide the start frame
-    game_frame.pack()          # Show the game frame
+        self.setup_ui()
 
-#set theme and color
-customtkinter.set_appearance_mode("dark")
-customtkinter.set_default_color_theme("green")
+    def setup_ui(self):
+        self.setStyleSheet("background-color: #333333; color: white;")
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setAlignment(Qt.AlignCenter)
 
-# Start frame
-start_frame = Frame(root, bg=root.cget("bg"))  # Frame for start page
-start_frame.pack(fill=BOTH, expand=True)
+        self.start_frame = QWidget(self)
+        self.start_frame_layout = QVBoxLayout(self.start_frame)
+        self.start_frame_layout.setAlignment(Qt.AlignCenter)
 
-start_text = Label(start_frame, text="Welcome!", font=("Helvetica", 18), bg=start_frame.cget("bg"), fg="white")
-start_text.pack(pady=20)
-start_text = Label(start_frame, text="Please click the Start Game button to begin the game", font=("Helvetica", 18), bg=start_frame.cget("bg"), fg="white")
-start_text.pack(pady=20)
+        self.start_text1 = QLabel("Welcome!", self.start_frame)
+        self.start_text1.setAlignment(Qt.AlignCenter)
+        self.start_text1.setStyleSheet("font-size: 30px;") 
+        self.start_frame_layout.addWidget(self.start_text1)
+
+        self.start_text2 = QLabel("Please click the Start Game button to begin the game", self.start_frame)
+        self.start_text2.setAlignment(Qt.AlignCenter)
+        self.start_text2.setStyleSheet("font-size: 24px;") 
+        self.start_frame_layout.addWidget(self.start_text2)
+
+        self.start_button = QPushButton("Start Game", self.start_frame)
+        self.start_button.setStyleSheet("""
+            QPushButton {
+                background-color: #009688;
+                color: white;
+                border: 2px solid #009688;
+                border-radius: 10px;
+                padding: 10px 20px;
+            }
+            QPushButton:hover {
+                background-color: #00796B; /* Darken color on hover */
+            }
+        """)
+        self.start_button.clicked.connect(self.start_game)
+        self.start_frame_layout.addWidget(self.start_button)
+
+        self.game_frame = QWidget(self)
+        self.game_frame_layout = QVBoxLayout(self.game_frame)
+        self.game_frame_layout.setAlignment(Qt.AlignCenter)
+
+        self.answer_entry = QLineEdit(self.game_frame)
+        self.answer_entry.setStyleSheet("""
+            QLineEdit {
+                border: 2px solid #009688;
+                border-radius: 10px;
+                padding: 10px;
+                font-size: 16px;
+            }
+        """)
+        self.game_frame_layout.addWidget(self.answer_entry)
 
 
-start_button = customtkinter.CTkButton(start_frame, text="Start Game", command=start_game)  # Changed start_frame here
-start_button.pack(pady=80)
+    def fade_out_start_frame(self):
+        self.animation = QPropertyAnimation(self.start_frame_graphicsEffects(), b"opacity")
 
-# Game frame
-game_frame = Frame(root, bg=root.cget("bg"))  # Frame for game page, initially hidden
+        self.main_layout.addWidget(self.start_frame)
+        self.main_layout.addWidget(self.game_frame)
+
+        self.game_frame.hide()
+
+    def start_game(self):
+        self.start_frame.hide()
+        self.game_frame.show()
 
 
-# User entry (will fix later)
-answer_entry = customtkinter.CTkEntry (game_frame,
-   # placeholder = "Enter Your Answer",
-    height = 50,
-    width = 200,
-    font = ("Helvetica", 18),
-    corner_radius = 50,
-    text_color = "green",
-    placeholder_text_color = "darkgreen",
-    fg_color = ("black","grey" ),   #outer,inner 
-    state = "normal", 
-
-)
-
-answer_entry.pack()
-root.mainloop()
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    mw = MainWindow()
+    mw.showMaximized()  # Show window in fullscreen mode
+    sys.exit(app.exec())
