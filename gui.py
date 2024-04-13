@@ -62,9 +62,6 @@ class MainWindow(QWidget):
         self.game_frame_layout.addWidget(self.answer_entry)
 
 
-    def fade_out_start_frame(self):
-        self.animation = QPropertyAnimation(self.start_frame_graphicsEffects(), b"opacity")
-
         self.main_layout.addWidget(self.start_frame)
         self.main_layout.addWidget(self.game_frame)
 
