@@ -8,12 +8,13 @@ Requirements:
 pip install spacy
 python -m spacy download en_core_web_sm
 python -m spacy download en_core_web_md
+python -m spacy download en_core_web_lg
 ```
 - pytest
 ```python
 pip install pytest
 ```
-- wikipedia-api
+- nltk
 ```python
-pip install wikipedia-api
+pip install nltk
 ```
