@@ -55,7 +55,7 @@ def analyze_response(response):
 
     return affirmative, negative, unsure
 
-def guess_fruit():
+def guess_fruit(response):
     possible_fruits = list(fruit_descriptions.keys())
     descriptors = extract_descriptors(fruit_descriptions)
        # Additional questions
@@ -71,12 +71,16 @@ def guess_fruit():
         "What level of firmness does the fruit possess?",
         "Does the fruit require peeling before consumption, or can it be bitten into directly?",
         "Does the fruit have any distinct aroma or fragrance?",
-        "What kind of climate is typically associated with the region where this fruit is grown?"
+        "What kind of climate is typically is it grown in?",
+        "What color is it?",
+        "What holiday is it typically associated with your fruit (if any)",
+        "What significant vitamins does this fruit contain?"
+
     ]
 
-    # First question to narrow down the possible fruits
-    print("> Think of a fruit and I'll try to guess it! Describe your fruit: ")
-    response = input().strip().lower()
+   # First question to narrow down the possible fruits
+    initial_question =" Think of a fruit and I'll try to guess it! Describe your fruit: "
+
 
     # Process the user's response to extract descriptors
     response_descriptors = extract_descriptors({'response': [response]})
@@ -84,9 +88,12 @@ def guess_fruit():
     # Filter the possible fruits based on the user's response
     possible_fruits = [fruit for fruit in possible_fruits if any(descriptor in fruit_descriptions[fruit] for descriptor in response_descriptors)]
 
+    
+
     while len(possible_fruits) > 1 and descriptors:
         descriptor = random.choice(descriptors)
         descriptors.remove(descriptor)
+        
 
         # Determine if the descriptor is a noun or an adjective
         doc = nlp(descriptor)
@@ -112,9 +119,13 @@ def guess_fruit():
             possible_fruits = [fruit for fruit in possible_fruits if descriptor not in fruit_descriptions[fruit]]
         elif unsure:
             print("> Ok, let's try another one.")
-
+            
+    random.shuffle(questions)
+    return initial_question, questions
     return f"> Is it a {possible_fruits[0]}?" if possible_fruits else "> I couldn't guess the fruit."
+   
 
-# Start the game
-fruit_guess = guess_fruit()
-print(fruit_guess)
+if __name__ == "__main__":
+    # Start the game
+    fruit_guess = guess_fruit()
+    print(fruit_guess)
