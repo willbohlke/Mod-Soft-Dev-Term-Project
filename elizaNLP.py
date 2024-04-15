@@ -12,7 +12,7 @@ fruit_descriptions = {
     "blackberry": ["sweet", "tart", "small", "black", "blue", "berry", "thorns"],
     "raspberry": ["sweet", "fuzzy", "small", "red", "thorns"],
     "strawberry": ["sweet", "tart", "small", "red", "pink", "seeds", "stem"],
-    "cherry": ["sweet", "tart", "small", "red", "seeds", "stem", "bunch","round"],
+    "cherry": ["sweet", "tart", "small", "red", "seeds", "stem", "bunch", "round"],
     "grape": ["sweet", "crisp", "small", "seedless", "purple", "green", "bunch", "round"],
     "watermelon": ["sweet", "crisp", "refreshing", "big", "red", "green", "a rind", "seeds", "round", "melon"],
     "honeydew melon": ["sweet", "soft", "refreshing", "big", "green", "a rind", "seeds", "round", "melon"],
@@ -30,6 +30,8 @@ fruit_descriptions = {
     "lime": ["sour", "tart", "citrus", "medium", "refreshing", "green", "round", "seeds"],
     "dragon fruit": ["sweet", "tropical", "seeds", "spiky", "medium", "pink", "green", "white"]
 }
+
+
 # apple, mango, banana, blueberry, blackberry, raspberry, strawberry, cherry, grape, watermelon, honeydew melon, cantaloupe, pear, plum, apricot, peach, kiwi, pomegranate, pineapple, orange, grapefruit, lemon, lime, dragon fruit
 
 def extract_descriptors(fruit_descriptions):
@@ -46,19 +48,32 @@ def extract_descriptors(fruit_descriptions):
 
     return list(descriptors)
 
+
 def analyze_response(response):
     doc = nlp(response)
-    
-    affirmative = any(token.lemma_ in ["yes", "affirmative", "indeed", "absolutely", "certainly", "sure", "definitely", "of course", "yeah", "yep", "yup", "aye", "roger", "uh-huh", "right", "okay", "agreed", "true", "yea", "correct", "alright", "amen", "positively", "undoubtedly", "yah", "yass", "exactly", "naturally", "precisely", "assuredly", "aha", "agreed", "granted", "undoubtedly", "unquestionably", "yesh"] for token in doc)
-    negative = any(token.lemma_ in ["no", "negative", "nay", "nope", "nah", "no way", "not", "never", "nix", "uh-uh", "nope", "not at all", "absolutely not", "by no means", "not a chance", "decline", "refuse", "reject", "deny", "veto", "rebuff", "renounce", "repudiate", "retract", "revoke", "withdraw", "non", "none", "nothing", "nowhere", "neither", "null", "void", "zero"] for token in doc)
-    unsure = any(token.lemma_ in ["unsure", "maybe", "perhaps", "possibly", "probably", "doubtful", "dubious", "questionable", "uncertain", "undecided", "undetermined", "don't know", "dont know", "idk"] for token in doc)
+
+    affirmative = any(
+        token.lemma_ in ["yes", "affirmative", "indeed", "absolutely", "certainly", "sure", "definitely", "of course",
+                         "yeah", "yep", "yup", "aye", "roger", "uh-huh", "right", "okay", "agreed", "true", "yea",
+                         "correct", "alright", "amen", "positively", "undoubtedly", "yah", "yass", "exactly",
+                         "naturally", "precisely", "assuredly", "aha", "agreed", "granted", "undoubtedly",
+                         "unquestionably", "yesh"] for token in doc)
+    negative = any(
+        token.lemma_ in ["no", "negative", "nay", "nope", "nah", "no way", "not", "never", "nix", "uh-uh", "nope",
+                         "not at all", "absolutely not", "by no means", "not a chance", "decline", "refuse", "reject",
+                         "deny", "veto", "rebuff", "renounce", "repudiate", "retract", "revoke", "withdraw", "non",
+                         "none", "nothing", "nowhere", "neither", "null", "void", "zero"] for token in doc)
+    unsure = any(
+        token.lemma_ in ["unsure", "maybe", "perhaps", "possibly", "probably", "doubtful", "dubious", "questionable",
+                         "uncertain", "undecided", "undetermined", "don't know", "dont know", "idk"] for token in doc)
 
     return affirmative, negative, unsure
+
 
 def guess_fruit():
     possible_fruits = list(fruit_descriptions.keys())
     descriptors = extract_descriptors(fruit_descriptions)
-       # Additional questions
+    # Additional questions
     questions = [
         "How does the fruit taste?",
         "Could you picture the size of the fruit? Is it small, medium, or large?",
@@ -79,7 +94,8 @@ def guess_fruit():
     response_descriptors = extract_descriptors({'response': [response]})
 
     # Filter the possible fruits based on the user's response
-    possible_fruits = [fruit for fruit in possible_fruits if any(descriptor in fruit_descriptions[fruit] for descriptor in response_descriptors)]
+    possible_fruits = [fruit for fruit in possible_fruits if
+                       any(descriptor in fruit_descriptions[fruit] for descriptor in response_descriptors)]
 
     while len(possible_fruits) > 1 and descriptors:
         descriptor = random.choice(descriptors)
@@ -111,6 +127,7 @@ def guess_fruit():
             print("> Ok, let's try another one.")
 
     return f"> Is it a {possible_fruits[0]}?" if possible_fruits else "> I couldn't guess the fruit."
+
 
 # Start the game
 fruit_guess = guess_fruit()

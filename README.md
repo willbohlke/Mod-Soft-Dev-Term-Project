@@ -7,8 +7,14 @@ Requirements:
 ```python
 pip install spacy
 python -m spacy download en_core_web_sm
+python -m spacy download en_core_web_md
+python -m spacy download en_core_web_lg
 ```
 - pytest
 ```python
 pip install pytest
+```
+- nltk
+```python
+pip install nltk
 ```
