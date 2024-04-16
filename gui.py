@@ -17,7 +17,8 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Fruit Guesser")
-        self.setGeometry(100, 100, 600, 400)
+       # self.setGeometry(100, 100, 600, 400)
+        self.setFixedSize(800, 1000) 
 
         self.setup_ui()
 
@@ -27,7 +28,7 @@ class MainWindow(QWidget):
         pixmap = QPixmap("background.png")  
         self.background_label.setPixmap(pixmap)
         self.background_label.setScaledContents(True)
-        self.background_label.setGeometry(0, 0, 1920, 1200) 
+        self.background_label.setGeometry(0, 0, 800, 1000) 
 
         # Set up the main layout
         self.main_layout = QVBoxLayout(self)
@@ -87,8 +88,8 @@ class MainWindow(QWidget):
         # Chat box
         self.chat_box = QTextEdit(self.game_frame)
         self.chat_box.setReadOnly(True)
-        self.chat_box.setFixedHeight(700)  # Set fixed height
-        self.chat_box.setFixedWidth(1100)  # Set fixed width
+        self.chat_box.setFixedHeight(450)  # Set fixed height
+        self.chat_box.setFixedWidth(650)  # Set fixed width
         self.chat_box.setStyleSheet("""
             QTextEdit {
                 border: 1px solid #ccc; /* Add border */
@@ -108,13 +109,12 @@ class MainWindow(QWidget):
 
         # Answer entry box
         self.answer_entry = QLineEdit(self.game_frame)
-        self.answer_entry.setFixedWidth(1100)
+        self.answer_entry.setFixedWidth(650)
         self.answer_entry.setFixedHeight(100)
         self.answer_entry.setStyleSheet("""
             QLineEdit {
                 border: 1px solid #ccc; /* Add border */
                 border-radius: 10px; /* Rounded corners */
-                padding: 5px; /* Add padding */
                 background-color: white;
             }
             QLineEdit:focus {
