@@ -1,9 +1,17 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QLineEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QLineEdit, QTextEdit, QHBoxLayout
 from PyQt5.QtCore import Qt
-from functools import partial
-import random
-from elizaNLP import guess_fruit, analyze_response
+from PyQt5.QtGui import QPixmap
+from elizaNLP import guess_fruit 
+import sys
+
+
+class BackgroundWidget(QWidget):
+    def __init__(self, background_image):
+        super().__init__()
+        self.background_label = QLabel(self)
+        pixmap = QPixmap(background_image)
+        self.background_label.setPixmap(pixmap)
+        self.background_label.setGeometry(0, 0, pixmap.width(), pixmap.height())
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -14,24 +22,29 @@ class MainWindow(QWidget):
         self.setup_ui()
 
     def setup_ui(self):
-        self.setStyleSheet("background-color: #333333; color: white;")
+        # Set up the background image
+        self.background_label = QLabel(self)
+        pixmap = QPixmap("background.png")  
+        self.background_label.setPixmap(pixmap)
+        self.background_label.setScaledContents(True)
+        self.background_label.setGeometry(0, 0, 1920, 1200) 
+
+        # Set up the main layout
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setAlignment(Qt.AlignCenter)
 
+        # Start frame
         self.start_frame = QWidget(self)
         self.start_frame_layout = QVBoxLayout(self.start_frame)
         self.start_frame_layout.setAlignment(Qt.AlignCenter)
 
+        # Welcome text
         self.start_text1 = QLabel("Welcome!", self.start_frame)
         self.start_text1.setAlignment(Qt.AlignCenter)
-        self.start_text1.setStyleSheet("font-size: 36px; font-weight: bold; color: #009688; margin-bottom: 20px") 
+        self.start_text1.setStyleSheet("font-size: 36px; font-weight: bold; color: #009688; margin-bottom: 20px")
         self.start_frame_layout.addWidget(self.start_text1)
 
-        self.start_text2 = QLabel("Please click the Start Game button to begin the game", self.start_frame)
-        self.start_text2.setAlignment(Qt.AlignCenter)
-        self.start_text2.setStyleSheet("font-size: 24px;") 
-        self.start_frame_layout.addWidget(self.start_text2)
-
+        # Start button
         self.start_button = QPushButton("Start Game", self.start_frame)
         self.start_button.setStyleSheet("""
             QPushButton {
@@ -41,6 +54,7 @@ class MainWindow(QWidget):
                 border-radius: 10px;
                 padding: 15px 30px;
                 font-size: 18px;
+                min-width: 400px;
             }
             QPushButton:hover {
                 background-color: #00796B; /* Darken color on hover */
@@ -49,36 +63,76 @@ class MainWindow(QWidget):
         self.start_button.clicked.connect(self.start_game)
         self.start_frame_layout.addWidget(self.start_button)
 
+        self.main_layout.addWidget(self.start_frame)
+
+        # Game frame
         self.game_frame = QWidget(self)
         self.game_frame_layout = QVBoxLayout(self.game_frame)
         self.game_frame_layout.setAlignment(Qt.AlignCenter)
 
+        # Create a horizontal layout to center the widgets
+        self.center_layout = QHBoxLayout()  # Define center layout
+        self.center_layout.setAlignment(Qt.AlignCenter)
+
+        # Question label
         self.question_label = QLabel(self.game_frame)
         self.question_label.setAlignment(Qt.AlignCenter)
         self.question_label.setStyleSheet("font-size: 18px; color: #009688;")
         self.game_frame_layout.addWidget(self.question_label)
 
-        # Display box for output
-        self.output_display = QLabel(self.game_frame)
-        self.output_display.setAlignment(Qt.AlignCenter)
-        self.output_display.setStyleSheet("font-size: 16px; color: #FFEB3B;")
-        self.game_frame_layout.addWidget(self.output_display)
+        # Add a vertical layout for the chat box and answer entry
+        self.chat_layout = QVBoxLayout()
+        self.chat_layout.setAlignment(Qt.AlignCenter)
 
-        # Box for user input
-        self.answer_entry = QLineEdit(self.game_frame)
-        self.answer_entry.setStyleSheet("""
-            QLineEdit {
-                border: 2px solid #009688;
-                border-radius: 10px;
-                padding: 10px;
-                font-size: 16px;
+        # Chat box
+        self.chat_box = QTextEdit(self.game_frame)
+        self.chat_box.setReadOnly(True)
+        self.chat_box.setFixedHeight(700)  # Set fixed height
+        self.chat_box.setFixedWidth(1100)  # Set fixed width
+        self.chat_box.setStyleSheet("""
+            QTextEdit {
+                border: 1px solid #ccc; /* Add border */
+                border-radius: 10px; /* Rounded corners */
+                padding: 5px; /* Add padding */
+                background-color: white;
+            }
+            QTextEdit:focus {
+                border: 2px solid #009688; /* Border color on focus */
+            }
+            QTextEdit {
+                border-bottom: 5px solid rgba(0,0,0,0.1); /* Add shadow */
+                border-right: 5px solid rgba(0,0,0,0.1); /* Add shadow */
             }
         """)
-        self.game_frame_layout.addWidget(self.answer_entry)
+        self.chat_layout.addWidget(self.chat_box)
 
-        self.main_layout.addWidget(self.start_frame)
+        # Answer entry box
+        self.answer_entry = QLineEdit(self.game_frame)
+        self.answer_entry.setFixedWidth(1100)
+        self.answer_entry.setFixedHeight(100)
+        self.answer_entry.setStyleSheet("""
+            QLineEdit {
+                border: 1px solid #ccc; /* Add border */
+                border-radius: 10px; /* Rounded corners */
+                padding: 5px; /* Add padding */
+                background-color: white;
+            }
+            QLineEdit:focus {
+                border: 2px solid #009688; /* Border color on focus */
+            }
+            QLineEdit {
+                border-bottom: 5px solid rgba(0,0,0,0.1); /* Add shadow */
+                border-right: 5px solid rgba(0,0,0,0.1); /* Add shadow */
+            }
+        """)
+        self.chat_layout.addWidget(self.answer_entry)
+
+        self.center_layout.addLayout(self.chat_layout)  # Add chat layout to center layout
+        self.game_frame_layout.addLayout(self.center_layout)  # Add center layout to game frame layout
+
         self.main_layout.addWidget(self.game_frame)
 
+        # Initially hide game frame
         self.game_frame.hide()
 
     def start_game(self):
@@ -91,44 +145,36 @@ class MainWindow(QWidget):
 
     def play_game(self):
         # Call guess_fruit to get the initial question and additional questions
-        initial_question, questions = guess_fruit("")
+        self.questions = guess_fruit("")
 
         # Display initial question
-        self.update_output(initial_question)
-
-        # Store the additional questions for later use
-        self.questions = questions
+        self.update_output("System", "Think of a fruit and I'll try to guess it! Describe your fruit: ")
 
         # Hide the answer entry until needed
         self.answer_entry.show()
 
         # Connect the Enter key to the answer entry
-        self.answer_entry.returnPressed.connect(partial(self.next_question, ""))
+        self.answer_entry.returnPressed.connect(lambda: self.process_response(self.answer_entry.text()))
 
+    def process_response(self, response):
+        print("User response:", response)
 
-    def next_question(self, response):
-        # Pass the user's response to the backend
-        initial_question, questions = guess_fruit(response)  # Pass the response here
+        # Append the user's response to the chat box
+        self.update_output("User", response)
 
-        # Update the output with the guess
-        self.update_output(initial_question)
+        # Display the next question from the list of questions
+        if self.questions:
+            next_question = self.questions.pop(0)
+            self.update_output("System", next_question)
+        else:
+            # If there are no more questions, hide the answer entry
+            self.answer_entry.hide()
 
         # Clear the answer entry for the next question
         self.answer_entry.clear()
 
-        # If there are no more questions, hide the answer entry
-        if not questions:
-            self.answer_entry.hide()
-            return
-
-        # Remove the current question from the list
-        current_question = questions.pop(0)
-        # Display the next question
-        self.update_output(current_question)
-        
-
-    def update_output(self, message):
-        self.output_display.setText(message)
+    def update_output(self, sender, message):
+        self.chat_box.append(f"{sender}: {message}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

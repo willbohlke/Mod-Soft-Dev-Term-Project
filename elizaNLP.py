@@ -79,7 +79,7 @@ def guess_fruit(response):
     ]
 
    # First question to narrow down the possible fruits
-    initial_question =" Think of a fruit and I'll try to guess it! Describe your fruit: "
+    #initial_question =" Think of a fruit and I'll try to guess it! Describe your fruit: "
 
 
     # Process the user's response to extract descriptors
@@ -91,8 +91,11 @@ def guess_fruit(response):
     
 
     while len(possible_fruits) > 1 and descriptors:
+      
+
         descriptor = random.choice(descriptors)
         descriptors.remove(descriptor)
+
         
 
         # Determine if the descriptor is a noun or an adjective
@@ -109,8 +112,6 @@ def guess_fruit(response):
         else:
             print(f"The descriptor '{descriptor}' is not a noun or an adjective.")
 
-        print(question)
-        response = input().strip().lower()
         affirmative, negative, unsure = analyze_response(response)
 
         if affirmative:
@@ -121,7 +122,8 @@ def guess_fruit(response):
             print("> Ok, let's try another one.")
             
     random.shuffle(questions)
-    return initial_question, questions
+    print(questions)
+    return questions
     return f"> Is it a {possible_fruits[0]}?" if possible_fruits else "> I couldn't guess the fruit."
    
 
