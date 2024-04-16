@@ -18,3 +18,5 @@ pip install pytest
 ```python
 pip install nltk
 ```
+
+pip install -U scikit-learn

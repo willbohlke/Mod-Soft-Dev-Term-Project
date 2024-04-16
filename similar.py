@@ -1,6 +1,6 @@
 import nltk
 from nltk.corpus import wordnet as wn
-from nltk.corpus.reader import Synset
+#from nltk.corpus.reader import Synset
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer

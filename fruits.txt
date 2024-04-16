@@ -1,0 +1,77 @@
+Apple
+Banana
+Orange
+Strawberry
+Grape
+Pineapple
+Blueberry
+Lemon
+Peach
+Mango
+Cherry
+Pear
+Blackberry
+Watermelon
+Kiwi
+Plum
+Raspberry
+Mandarin
+Papaya
+Fig
+Guava
+Lychee
+Pomegranate
+Apricot
+Avocado
+Cantaloupe
+Nectarine
+Coconut
+Grapefruit
+Tangerine
+Durian
+Jackfruit
+Passion Fruit
+Star Fruit
+Dragon Fruit
+Kumquat
+Persimmon
+Quince
+Mulberry
+Loquat
+Jujube
+Plantain
+Kiwano
+Rambutan
+Longan
+Feijoa
+Sapodilla
+Cherimoya
+Soursop
+Carambola
+Tamarind
+Honeydew
+Red Currant
+White Currant
+Gooseberry
+Acai Berry
+Elderberry
+Salak
+Fig
+Date
+Huckleberry
+Cranberry
+Cloudberry
+Boysenberry
+Loganberry
+Marionberry
+Bilberry
+Olallieberry
+Barberry
+Mayapple
+Lime
+Buddha's Hand
+Blood Orange
+Seville Orange
+Satsuma
+Ugli Fruit
+Yuzu
