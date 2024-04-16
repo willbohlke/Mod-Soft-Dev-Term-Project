@@ -39,7 +39,10 @@ class FruitSimilarity:
         similarity_scores = {fruit: score for fruit, score in zip(self.fruit_definitions.keys(), cosine_similarities)}
         sorted_similarity_scores = sorted(similarity_scores.items(), key=lambda item: item[1], reverse=True)
 
-        return sorted_similarity_scores
+        # Filter out results with similarity score less than 0.50 and limit to top 5
+        top_5_scores = [score for score in sorted_similarity_scores if score[1] > 0.30][:5]
+
+        return top_5_scores
 
 # example usage
 
@@ -47,9 +50,14 @@ class FruitSimilarity:
 # 
 # fruits = ["apple", "banana", "orange", "strawberry", "kiwi", "pineapple", "grape", "blueberry", "pear", "peach"]
 # fruit_similarity = FruitSimilarity(fruits)
-# user_description = "A sweet, red fruit"
-# similarity_scores = fruit_similarity.calculate_similarity(user_description)
+# user_description = ""
+# while True:
+#     user_input = input("Describe the fruit (or 'quit' to stop): ")
+#     if user_input.lower() == 'quit':
+#         break
+#     user_description += " " + user_input
+#     similarity_scores = fruit_similarity.calculate_similarity(user_description)
 
-# print("\nFruits ranked by similarity to your description:")
-# for fruit, score in similarity_scores:
-#     print(f"{fruit}: {score:.4f}")
+#     print("\nFruits ranked by similarity to your description:")
+#     for fruit, score in similarity_scores:
+#         print(f"{fruit}: {score:.4f}")
