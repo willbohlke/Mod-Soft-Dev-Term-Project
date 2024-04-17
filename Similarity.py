@@ -1,61 +1,69 @@
 import wikipediaapi
+import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Initialize an empty list to hold the objects
-object_list = []
+class Similarity:
+    def __init__(self, object_list, object_type):
+        self.wiki_wiki = wikipediaapi.Wikipedia('Guessing Game (https://github.com/willbohlke/Mod-Soft-Dev-Term-Project)', 'en')
+        self.object_list = object_list
+        self.object_type = object_type
 
-# Read the contents of the file and store each line in the list
-with open('fruits.txt', 'r') as file:
-    for line in file:
-        # Strip any newlines and add to the list
-        object_list.append(line.strip())
+    def get_descriptions(self):
+        descriptions = {}
+        for object in self.object_list:
+            page = self.wiki_wiki.page(object)
+            # if not page.exists():
+            #     print(f"No Wikipedia page found for {object}")
+            #     continue
 
-# Define the object type for better search results (Should be user input at the beginning of the game)
-object_type = 'fruit'
+            # Check if the page is a disambiguation page and get the most relevant link
+            if 'Category:Disambiguation pages' in page.categories:
+                links = page.links
+                for link in links:
+                    if self.object_type in link:
+                        page = self.wiki_wiki.page(link)
+                        break
+                    else:
+                        most_similar_link = max(links, key=lambda link: self.object_type in link)
+                        page = self.wiki_wiki.page(most_similar_link)
+            description = ""
+            # Get the text from the sections with the most relevant titles
+            for section in page.sections:
+                if section.title in [self.object_type, 'Characteristics', 'Description', 'Skin']:
+                    description += section.text + "\n"
+            description += page.summary
+            descriptions[object] = description
+        return descriptions
 
-wiki_wiki = wikipediaapi.Wikipedia('Guessing Game (https://github.com/willbohlke/Mod-Soft-Dev-Term-Project)', 'en')
+    def lemmatize_text(self, text):
+        nlp = spacy.load('en_core_web_sm')
+        doc = nlp(text)
+        lemmatized_text = " ".join([token.lemma_ for token in doc])
+        return lemmatized_text
 
-def get_descriptions(object_list):
-    descriptions = {}
-    for object in object_list:
-        page = wiki_wiki.page(object)
-        if 'Category:Disambiguation pages' in page.categories:
-            links = page.links
-            # get the link that contains the object_type, else try to select the most relevant link
-            for link in links:
-                if object_type in link:
-                    page = wiki_wiki.page(link)
-                    break
-                else:
-                    # Select the most similar link to object_type
-                    most_similar_link = max(links, key=lambda link: object_type in link)
-                    page = wiki_wiki.page(most_similar_link)
-        section_description = page.section_by_title('Description') or page.section_by_title(object_type)
-        if section_description is not None:
-            description = section_description.text
-        else:
-            description = page.summary
-        descriptions[object] = description
-    return descriptions
-
-def get_similarity(input):
-    descriptions_list = get_descriptions(object_list)
-    # Create a list of the descriptions and the input string
-    texts = list(descriptions.values()) + [input]
-
-    # Convert the texts to TF-IDF vectors
-    vectorizer = TfidfVectorizer().fit_transform(texts)
-
-    # Compute the cosine similarity between the input string and the descriptions
-    similarities = cosine_similarity(vectorizer[-1], vectorizer[:-1])
-
-    # Create a dictionary of the objects and their similarity to the input string
-    similarity_dict = dict(zip(descriptions.keys(), similarities[0]))
-
-    return similarity_dict
-
-# Get the descriptions of all the objects in 'object_list'
-descriptions = get_descriptions(object_list)
-for object, description in descriptions.items():
-    print(f"The description of {object} is: {description}")
+    def get_guesses(self, input):
+        print("> Thinking...")
+        descriptions_list = self.get_descriptions()
+        # Lemmatize descriptions and input
+        texts = [self.lemmatize_text(text) for text in descriptions_list.values()] + [self.lemmatize_text(input)]
+        vectorizer = TfidfVectorizer(stop_words='english').fit_transform(texts)
+        similarities = cosine_similarity(vectorizer[-1], vectorizer[:-1])
+        similarity_dict = dict(zip(descriptions_list.keys(), similarities[0]))
+        # Convert scores to percentages and round to 2 decimal places
+        similarity_dict = {k: round(v * 100, 2) for k, v in similarity_dict.items()}
+        # Filter scores that are above 0
+        top_guesses = {k: v for k, v in similarity_dict.items() if v > 0}
+        sorted_guesses = sorted(top_guesses.items(), key=lambda x: x[1], reverse=True)
+        if sorted_guesses:
+            # Return top 5 scores or less if there are less than 5
+            top_guess = sorted_guesses[0]
+            score = top_guess[1]
+            if score == 0:
+                return "> No guess."
+            elif score < 7:
+                return f"> Weak guess: ({top_guess[0]}, {score})"
+            elif score < 20:
+                return f"> Average guess: ({top_guess[0]}, {score})"
+            else:
+                return f"> Strong guess: ({top_guess[0]}, {score})"
