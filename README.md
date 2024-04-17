@@ -18,3 +18,8 @@ pip install pytest
 ```python
 pip install nltk
 ```
+- PyQt5
+```python
+pip install PyQt5
+```
+
