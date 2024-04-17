@@ -58,12 +58,14 @@ class Similarity:
         if sorted_guesses:
             # Return top 5 scores or less if there are less than 5
             top_guess = sorted_guesses[0]
+            guess_strength = ""
             score = top_guess[1]
             if score == 0:
-                return "> No guess."
+                guess_strength = "none"
             elif score < 7:
-                return f"> Weak guess: ({top_guess[0]}, {score})"
+                guess_strength = "weak"
             elif score < 20:
-                return f"> Average guess: ({top_guess[0]}, {score})"
+                guess_strength = "moderate"
             else:
-                return f"> Strong guess: ({top_guess[0]}, {score})"
+                guess_strength = "strong"
+        return guess_strength, top_guess
