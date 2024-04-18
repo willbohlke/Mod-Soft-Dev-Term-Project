@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QLineEdit, QTextEdit, QHBoxLayout, QSlider
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QUrl
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
-from elizaNLP import guess_fruit 
+from question import fruit_questions 
 import sys
 
 class BackgroundWidget(QWidget):
@@ -20,7 +20,7 @@ class MainWindow(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Fruit Guesser")
+        self.setWindowTitle("Guess What?")
         self.setFixedSize(1200, 600)
         self.setup_ui()
         self.setup_audio()
@@ -118,6 +118,7 @@ class MainWindow(QWidget):
         self.fruit_guesser_button.clicked.connect(self.start_game)
         self.game_mode_frame_layout.addWidget(self.fruit_guesser_button)
 
+
         # Hide game mode frame initially
         self.game_mode_frame.hide()
 
@@ -200,7 +201,25 @@ class MainWindow(QWidget):
         self.center_layout.addLayout(self.chat_layout)  # Add chat layout to center layout
         self.game_frame_layout.addLayout(self.center_layout)  # Add center layout to game frame layout
 
-        
+           # Quit game button
+        self.quit_game_button = QPushButton("Quit Game", self.game_frame)
+        self.quit_game_button.setStyleSheet("""
+            QPushButton {
+                background-color: #800000;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                padding: 15px 30px;
+                font-size: 18px;
+                max-width: 100px;
+            }
+            QPushButton:hover {
+                background-color: #8B0000; /* Darken color on hover */
+            }
+        """)
+        self.quit_game_button.clicked.connect(self.quit_game)
+        self.game_frame_layout.addWidget(self.quit_game_button)
+        self.game_frame_layout.addWidget(self.quit_game_button, alignment=Qt.AlignBottom | Qt.AlignRight)
 
         # Hide game frame initially
         self.game_frame.hide()
@@ -260,27 +279,37 @@ class MainWindow(QWidget):
         self.game_mode_frame.show()
 
     def play_game(self):
-        # Call guess_fruit to get the initial question and additional questions
-        self.questions = guess_fruit("")
-
-        # Display initial question
+        print("Starting the game...")
+        # Hide game mode frame
+        self.game_mode_frame.hide()
+        # Show game frame
+        self.game_frame.show()
+        # Start the fruit guessing game
+        self.user_description = ""  # Reset user description
+        self.asked_questions = []   # Initialize asked questions list
         self.update_output("System", "Think of a fruit and I'll try to guess it! Describe your fruit: ")
-
-        # Hide the answer entry until needed
         self.answer_entry.show()
-
-        # Connect the Enter key to the answer entry
         self.answer_entry.returnPressed.connect(lambda: self.process_response(self.answer_entry.text()))
+        # Call fruit_questions with an empty user description and an empty list of asked questions
+        self.questions = fruit_questions("", [])
+
 
     def process_response(self, response):
         print("User response:", response)
 
+        # Append the user's response to the user_description string
+        self.user_description += " " + response
+
         # Append the user's response to the chat box
         self.update_output("User", response)
+
+        # Pass the user_description string to fruit_questions, along with asked questions
+        self.questions = fruit_questions(self.user_description.strip(), self.asked_questions)
 
         # Display the next question from the list of questions
         if self.questions:
             next_question = self.questions.pop(0)
+            self.asked_questions.append(next_question)  # Add the new question to the list of asked questions
             self.update_output("System", next_question)
         else:
             # If there are no more questions, hide the answer entry
@@ -288,13 +317,25 @@ class MainWindow(QWidget):
 
         # Clear the answer entry for the next question
         self.answer_entry.clear()
-
+        
     def update_output(self, sender, message):
         self.chat_box.append(f"{sender}: {message}")
+
+
+    def quit_game(self):
+        print("Quitting the game...")
+        # Hide the game frame
+        self.game_frame.hide()
+        # Show the start frame
+        self.start_frame.show()
+        # Clear the chat box
+        self.chat_box.clear()
 
     def adjust_volume(self, volume_level):
         # Set the volume level
         self.media_player.setVolume(volume_level)
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
