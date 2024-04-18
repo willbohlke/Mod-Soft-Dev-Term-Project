@@ -21,7 +21,7 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Guess What?")
-        self.setFixedSize(1200, 600)
+        self.setFixedSize(1400, 800)
         self.setup_ui()
         self.setup_audio()
 
@@ -31,7 +31,7 @@ class MainWindow(QWidget):
         pixmap = QPixmap("images/background.png")  
         self.background_label.setPixmap(pixmap)
         self.background_label.setScaledContents(True)
-        self.background_label.setGeometry(0, 0, 1200, 600) 
+        self.background_label.setGeometry(0, 0, 1400, 800) 
 
 
         # Mute icon
