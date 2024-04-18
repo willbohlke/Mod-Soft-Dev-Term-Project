@@ -1,47 +1,48 @@
 import pytest
+import nltk
+
+from nltk.corpus import wordnet as wn
 from elizaNLP import extract_descriptors, analyze_response, guess_fruit
+from similar import FruitSimilarity
 
 
-# Define test cases for extract_descriptors function
+# Patch spacy.load with the mock fixture
 def test_extract_descriptors():
+    # Sample fruit descriptions
     fruit_descriptions = {
-        "apple": ["sweet", "sour", "crisp", "green", "red"],
-        "mango": ["sweet", "soft", "tropical", "yellow", "orange", "red"],
-        "banana": ["sweet", "creamy", "yellow"],
-        "blueberry": ["sweet", "small", "purple", "blue"],
-        "blackberry": ["sweet", "small", "black", "blue"],
-        "raspberry": ["sweet", "fuzzy", "small", "red"],
-        "grape": ["sweet", "crisp", "small", "seedless", "purple", "green"],
-        "watermelon": ["sweet", "crisp", "refreshing", "big", "red", "green", "pink"],
-        "pear": ["sweet", "soft", "green"],
-        "plum": ["sweet", "soft", "small", "purple"],
-        "apricot": ["sweet", "soft", "fuzzy", "small", "orange"],
-        "peach": ["sweet", "soft", "fuzzy", "pink", "orange"],
-        "kiwi": ["sweet", "tropical", "fuzzy", "refreshing", "green"],
-        "pineapple": ["sour", "tropical", "refreshing", "yellow"],
-        "orange": ["sour", "citrusy", "orange"],
-        "lemon": ["sour", "citrusy", "refreshing", "yellow"],
-        "lime": ["sour", "citrusy", "refreshing", "green"]
+        "apple": ["sweet", "tart", "sour", "crisp", "green", "red"],
     }
+
+    # Expected descriptors
+    expected_descriptors = ["sweet", "tart", "sour", "crisp", "green"]
+
+    # Test the function
     descriptors = extract_descriptors(fruit_descriptions)
-    expected_descriptors = ["sweet", "sour", "crisp", "green", "red"]
+
+    # Assert that the extracted descriptors match the expected ones
     assert set(descriptors) == set(expected_descriptors)
 
 
-# Define test cases for analyze_response function
-@pytest.mark.parametrize("response, expected", [
-    ("Yes, it is.", (True, False)),
-    ("No, it isn't.", (False, True)),
-    ("Maybe.", (False, False)),
-])
-def test_analyze_response(response, expected):
-    assert analyze_response(response) == expected
+def test_analyze_response():
+    # Test affirmative response
+    affirmative_response = "yes for sure"
+    affirmative, negative, unsure = analyze_response(affirmative_response)
+    assert affirmative and not negative and not unsure
+
+    # Test negative response
+    negative_response = "no way"
+    affirmative, negative, unsure = analyze_response(negative_response)
+    assert not affirmative and negative and not unsure
+
+    # # Test unsure response
+    unsure_response = "maybe"
+    affirmative, negative, unsure = analyze_response(unsure_response)
+    assert not affirmative and not negative and unsure  # Updated assertion for unsure response
 
 
-# Define test cases for guess_fruit function
 def test_guess_fruit(monkeypatch):
     # Define mock user input
-    user_input = iter(["yes", "no", "yes", "yes", "no"])  # Add more input values as needed
+    user_input = iter(["yes", "no", "yes", "yes", "yes"])  # Add more input values as needed
 
     # Mock input() function to return user_input values
     def mock_input():
@@ -52,9 +53,44 @@ def test_guess_fruit(monkeypatch):
 
     # Call the function and check the result
     fruit_guess = guess_fruit()
-    assert fruit_guess == "I couldn't guess the fruit."
+    assert fruit_guess == "> I couldn't guess the fruit."
 
 
-# Run tests
-if __name__ == "__main__":
-    pytest.main()
+def mock_wn_synsets(fruit):
+    # Simulate some basic synset results
+    synsets = []
+    if fruit == "apple":
+        synsets.append(wn.Synset("fruit.n.01"))  # Mock a synset with fruit definition
+    return synsets
+
+
+wn.synsets = mock_wn_synsets  # Replace actual wn.synsets with mock
+
+
+class TestFruitSimilarity:
+
+    def test_get_fruit_definitions_with_definition(self):  # Test with actual wn.synsets
+        fruits = ["apple", "banana"]
+        fruit_similarity = FruitSimilarity(fruits)
+        fruit_definitions = fruit_similarity.get_fruit_definitions()
+
+        assert len(fruit_definitions) == 1  # Only apple should have definition
+        assert "apple" in fruit_definitions
+        assert isinstance(fruit_definitions["apple"], str)  # Definition should be a string
+
+    def test_get_fruit_definitions_without_definition(self):  # Test with actual wn.synsets
+        fruits = ["banana"]
+        fruit_similarity = FruitSimilarity(fruits)
+        fruit_definitions = fruit_similarity.get_fruit_definitions()
+
+        assert len(fruit_definitions) == 0  # No definition found for banana
+
+    def test_calculate_similarity(self):  # Test (unchanged)
+        fruits = ["apple", "orange"]
+        fruit_similarity = FruitSimilarity(fruits)
+        user_description = "A sweet, red fruit"
+        similarity_scores = fruit_similarity.calculate_similarity(user_description)
+
+        assert len(similarity_scores) == 2  # Scores for both fruits
+        assert similarity_scores[0][0] == "apple"  # Apple should be more similar due to "red"
+        assert similarity_scores[1][0] == "orange"

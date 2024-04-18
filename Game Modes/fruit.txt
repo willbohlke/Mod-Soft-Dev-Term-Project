@@ -1,28 +1,31 @@
-Banana
 Apple
-Grape
-Orange
-Mango
-Strawberry
-Watermelon
-Pineapple
+Apricot
 Avocado
+Banana
+Blackberry
+Blueberry
+Cantaloupe
+Cherry
+Coconut
+Cranberry
+Fig
+Grape
+Grapefruit
+Guava
+Honeydew (melon)
+Kiwifruit
 Lemon
+Lime (fruit)
+Mandarin orange
+Mango
+Orange (fruit)
+Papaya
 Peach
 Pear
-Cherry
+Pineapple
 Plum
-Kiwi
-Papaya
-Raspberry
-Blueberry
-Blackberry
-Coconut
-Lime
 Pomegranate
-Fig
-Apricot
-Cantaloupe
-Honeydew (melon)
-Nectarine
+Raspberry
+Strawberry
 Tangerine
+Watermelon
