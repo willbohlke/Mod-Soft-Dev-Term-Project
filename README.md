@@ -1,25 +1,14 @@
 # Mod-Soft-Dev-Term-Project
-https://georgiasouthern.desire2learn.com/d2l/le/content/763723/viewContent/12142017/View?ou=763723
 
-Requirements:
+## Requirements (Run these in the terminal of your environment before using):
 
-- spaCy library
 ```python
-pip install spacy
-python -m spacy download en_core_web_sm
-python -m spacy download en_core_web_md
-python -m spacy download en_core_web_lg
-```
-- pytest
-```python
-pip install pytest
-```
-- nltk
-```python
-pip install nltk
-```
-- PyQt5
-```python
+pip install pytest #For unit testing
+pip install wikipedia-api #This api fetches descriptions of the objects loaded from the .txt file
+pip install -U scikit-learn #Used for NLP to calculate cosign similarity
+pip install spacy #Provides lemmatization in the NLP process
+python -m spacy download en_core_web_sm #Try replacing 'sm' with 'md' or 'lg' for more accurate guesses. However, they are a larger downloads.
 pip install PyQt5
 ```
 
+## How to play:
