@@ -21,26 +21,57 @@ object_list = []
 file_path = os.path.join('Game Modes', object_type)
 with open(file_path, 'r') as file:
     for line in file:
-        # Strip any newlines and add to the list
+        # Strip any new lines and add to the list
         object_list.append(line.strip())
 
-while True: # while the guess_strength < 90, loop 5 times and keep asking for more hints with appended text and then ask user
-    similarity = Similarity(object_list, object_type)
-    user_desc = input("> Enter a description of the " + os.path.splitext(object_type)[0] + " you're thinking of: \n> ")
-    similarity_scores = similarity.get_guesses(user_desc)
+guesses_made = 0
+max_guesses = 3
+questions_asked = 0
+max_questions = 5
+description = ""
+
+similarity = Similarity(object_list, object_type)
+
+# Until the guess is confident (guess_strength => 85), loop 5 times and keep asking for more hints with appended descriptions
+# The program gets 3 guesses
+while guesses_made < max_guesses and questions_asked < max_guesses:
+    
+    description += input("> Describe the " + os.path.splitext(object_type)[0] + " you're thinking of: \n> ") + " "
+    similarity_scores = similarity.get_guesses(description)
     print(similarity_scores)
 
-    # Receive user input here and check for various responses
-    print(f"> Is it '{similarity_scores[1][0]}'?")
-    user_response = input("> ").lower()
+    # Check if the guess strength is sufficient
+    if similarity_scores[0] == "very strong":
+        # Make guess and evaluate user input
+        print(f"> Is it '{similarity_scores[1][0]}'?")
+        guesses_made += 1
+        user_response = input("> ").lower()
 
-    affirmative_responses = ['yes', 'yeah', 'yep', 'correct', 'that\'s right', 'exactly']
-    negative_responses = ['no', 'nope', 'nah', 'incorrect', 'wrong', 'not quite']
+        affirmative_responses = ['yes', 'yeah', 'yep', 'correct', 'that\'s right', 'exactly']
+        negative_responses = ['no', 'nope', 'nah', 'incorrect', 'wrong', 'not quite']
 
-    if user_response in affirmative_responses:
-        print("> Hooray! I guessed it! Thanks for playing.")
-        exit()
-    elif user_response in negative_responses:
-        print("> Oh, sorry to hear that. Let's keep trying.")
+        if user_response in affirmative_responses:
+            print("> Hooray! I guessed it! Thanks for playing.")
+            exit()
+        elif user_response in negative_responses:
+            print("> Oh, sorry to hear that. Let's keep trying.")
+        else:
+            print("> I'm sorry, I didn't understand your response. Let's keep trying.")
     else:
-        print("> I'm sorry, I didn't understand your response. Let's keep trying.")
+        print("> Okay, I have some ideas. Give me another hint.")
+        questions_asked += 1
+
+# Make final guess
+print(f"> Is it '{similarity_scores[1][0]}'?")
+user_response = input("> ").lower()
+
+affirmative_responses = ['yes', 'yeah', 'yep', 'correct', 'that\'s right', 'exactly']
+negative_responses = ['no', 'nope', 'nah', 'incorrect', 'wrong', 'not quite']
+
+if user_response in affirmative_responses:
+    print("> Yay, I guessed it! Thanks for playing.")
+    exit()
+elif user_response in negative_responses:
+    print("> Too bad! Good game.")
+else:
+    print("> I'm sorry, I didn't understand your response. I'll take it as a win!")
