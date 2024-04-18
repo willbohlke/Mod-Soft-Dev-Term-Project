@@ -34,7 +34,7 @@ class MainWindow(QWidget):
         self.background_label.setGeometry(0, 0, 1400, 800) 
 
 
-        # volume icon
+        # Mute icon
         self.mute_icon_label = QLabel(self)
         self.mute_icon_label.setPixmap(QPixmap("images/mute_icon.png").scaled(80, 80, Qt.KeepAspectRatio))  # Set icon
         self.mute_icon_label.setFixedSize(100, 100)
@@ -67,13 +67,9 @@ class MainWindow(QWidget):
         self.start_text1.setStyleSheet("font-size: 36px; font-weight: bold; color: #FFFFFF; margin-bottom: 20px")
         self.start_frame_layout.addWidget(self.start_text1)
 
-
-
-        self.main_layout.addWidget(self.start_frame)
-
-        # Play game button
-        self.start_game_button = QPushButton("Play Game", self.start_frame)
-        self.start_game_button.setStyleSheet("""
+        # Game mode button
+        self.game_mode_button = QPushButton("Game Mode", self.start_frame)
+        self.game_mode_button.setStyleSheet("""
             QPushButton {
                 background-color: #000080;
                 color: white;
@@ -87,9 +83,46 @@ class MainWindow(QWidget):
                 background-color: #191970; /* Darken color on hover */
             }
         """)
-        self.start_game_button.clicked.connect(self.start_game)
-        self.start_frame_layout.addWidget(self.start_game_button)
+        self.game_mode_button.clicked.connect(self.game_mode)
+        self.start_frame_layout.addWidget(self.game_mode_button)
 
+        self.main_layout.addWidget(self.start_frame)
+
+        # Game mode frame
+        self.game_mode_frame = QWidget(self)
+        self.game_mode_frame_layout = QVBoxLayout(self.game_mode_frame)
+        self.game_mode_frame_layout.setAlignment(Qt.AlignCenter)
+
+        # Choose game mode text
+        self.game_mode_message = QLabel("Please choose a game mode", self.game_mode_frame)
+        self.game_mode_message.setAlignment(Qt.AlignCenter) 
+        self.game_mode_message.setStyleSheet("font-size: 24px; color: #FFFFFF;")
+        self.game_mode_frame_layout.addWidget(self.game_mode_message)
+
+        # Fruit guesser button
+        self.fruit_guesser_button = QPushButton("Fruit Guesser", self.game_mode_frame)
+        self.fruit_guesser_button.setStyleSheet("""
+            QPushButton {
+                background-color: #000080;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                padding: 15px 30px;
+                font-size: 18px;
+                min-width: 400px;
+            }
+            QPushButton:hover {
+                background-color: #191970; /* Darken color on hover */
+            }
+        """)
+        self.fruit_guesser_button.clicked.connect(self.start_game)
+        self.game_mode_frame_layout.addWidget(self.fruit_guesser_button)
+
+
+        # Hide game mode frame initially
+        self.game_mode_frame.hide()
+
+        self.main_layout.addWidget(self.game_mode_frame)
 
         # Game frame
         self.game_frame = QWidget(self)
@@ -222,6 +255,8 @@ class MainWindow(QWidget):
 
     def start_game(self):
         print("Starting the game...")
+        # Hide game mode frame
+        self.game_mode_frame.hide()
         # Show game frame
         self.game_frame.show()
         # Start the fruit guessing game
@@ -236,11 +271,17 @@ class MainWindow(QWidget):
         self.media_player.setPosition(0)
         self.media_player.play()    
 
+    def game_mode(self):
+        print("Entering game mode...")
+        # Hide start frame
+        self.start_frame.hide()
+        # Show game mode frame
+        self.game_mode_frame.show()
 
     def play_game(self):
         print("Starting the game...")
-        
-        self.start_frame.hide()
+        # Hide game mode frame
+        self.game_mode_frame.hide()
         # Show game frame
         self.game_frame.show()
         # Start the fruit guessing game
