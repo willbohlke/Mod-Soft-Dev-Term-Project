@@ -24,14 +24,14 @@ with open(file_path, 'r') as file:
         # Strip any newlines and add to the list
         object_list.append(line.strip())
 
-while True:
+while True: # while the guess_strength < 90, loop 5 times and keep asking for more hints with appended text and then ask user
     similarity = Similarity(object_list, object_type)
     user_desc = input("> Enter a description of the " + os.path.splitext(object_type)[0] + " you're thinking of: \n> ")
     similarity_scores = similarity.get_guesses(user_desc)
     print(similarity_scores)
 
     # Receive user input here and check for various responses
-    print(f"> Is it a {similarity_scores[1][0]}?")
+    print(f"> Is it '{similarity_scores[1][0]}'?")
     user_response = input("> ").lower()
 
     affirmative_responses = ['yes', 'yeah', 'yep', 'correct', 'that\'s right', 'exactly']
