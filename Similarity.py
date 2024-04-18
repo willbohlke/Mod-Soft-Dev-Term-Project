@@ -1,7 +1,7 @@
 import wikipediaapi
 import spacy
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sentence_transformers import SentenceTransformer
 
 class Similarity:
     def __init__(self, object_list, object_type):
@@ -48,8 +48,14 @@ class Similarity:
 
         # Lemmatize descriptions and input
         texts = [self.lemmatize_text(text) for text in descriptions_list.values()] + [self.lemmatize_text(input)]
-        vectorizer = TfidfVectorizer(stop_words='english').fit_transform(texts)
-        similarities = cosine_similarity(vectorizer[-1], vectorizer[:-1])
+        
+        # Use BERT to convert the texts to vectors
+        model = SentenceTransformer('bert-base-nli-mean-tokens')
+        vectors = model.encode(texts)
+        
+        # Compute the cosine similarity between the input vector and the description vectors
+        similarities = cosine_similarity([vectors[-1]], vectors[:-1])
+        
         similarity_dict = dict(zip(descriptions_list.keys(), similarities[0]))
         
         # Convert scores to percentages and round to 2 decimal places
@@ -59,16 +65,18 @@ class Similarity:
         sorted_guesses = sorted(top_guesses.items(), key=lambda x: x[1], reverse=True)
         
         if sorted_guesses:
-            # Return top 5 scores or less if there are less than 5
-            top_guess = sorted_guesses[0]
+            # Return top 3 guesses
+            top_guesses = sorted_guesses[:3]
             guess_strength = ""
-            score = top_guess[1]
+            score = top_guesses[0][1]
             if score == 0:
                 guess_strength = "none"
-            elif score < 7:
+            elif score < 50:
                 guess_strength = "weak"
-            elif score < 20:
+            elif score < 70:
                 guess_strength = "moderate"
-            else:
+            elif score < 85:
                 guess_strength = "strong"
-        return guess_strength, top_guess
+            else:
+                guess_strength = "very strong"
+        return guess_strength, top_guesses
