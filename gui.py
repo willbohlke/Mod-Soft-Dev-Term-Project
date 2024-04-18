@@ -1,9 +1,10 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QLineEdit, QTextEdit, QHBoxLayout
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QLineEdit, QTextEdit, QHBoxLayout, QSlider
+from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtCore import QUrl
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from elizaNLP import guess_fruit 
 import sys
-
 
 class BackgroundWidget(QWidget):
     def __init__(self, background_image):
@@ -14,25 +15,46 @@ class BackgroundWidget(QWidget):
         self.background_label.setGeometry(0, 0, pixmap.width(), pixmap.height())
 
 class MainWindow(QWidget):
+
+    media_finished = pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Fruit Guesser")
-       # self.setGeometry(100, 100, 600, 400)
-        self.setFixedSize(800, 1000) 
-
+        self.setFixedSize(1200, 600)
         self.setup_ui()
+        self.setup_audio()
 
     def setup_ui(self):
         # Set up the background image
         self.background_label = QLabel(self)
-        pixmap = QPixmap("background.png")  
+        pixmap = QPixmap("images/background.png")  
         self.background_label.setPixmap(pixmap)
         self.background_label.setScaledContents(True)
-        self.background_label.setGeometry(0, 0, 800, 1000) 
+        self.background_label.setGeometry(0, 0, 1200, 600) 
+
+
+        # Mute icon
+        self.mute_icon_label = QLabel(self)
+        self.mute_icon_label.setPixmap(QPixmap("images/mute_icon.png").scaled(80, 80, Qt.KeepAspectRatio))  # Set icon
+        self.mute_icon_label.setFixedSize(100, 100)
+        self.mute_icon_label.setStyleSheet("""
+            QLabel {
+                background-color: transparent; /* Background color */
+                border: none;
+                border-radius: 20px; /* Rounded border */
+                padding: 10px; /* Padding */
+            }
+        """)
+        self.mute_icon_label.move(20, 20)
+        self.mute_icon_label.raise_()
+
 
         # Set up the main layout
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setAlignment(Qt.AlignCenter)
+        
+    
 
         # Start frame
         self.start_frame = QWidget(self)
@@ -42,14 +64,14 @@ class MainWindow(QWidget):
         # Welcome text
         self.start_text1 = QLabel("Welcome!", self.start_frame)
         self.start_text1.setAlignment(Qt.AlignCenter)
-        self.start_text1.setStyleSheet("font-size: 36px; font-weight: bold; color: #009688; margin-bottom: 20px")
+        self.start_text1.setStyleSheet("font-size: 36px; font-weight: bold; color: #FFFFFF; margin-bottom: 20px")
         self.start_frame_layout.addWidget(self.start_text1)
 
-        # Start button
-        self.start_button = QPushButton("Start Game", self.start_frame)
-        self.start_button.setStyleSheet("""
+        # Game mode button
+        self.game_mode_button = QPushButton("Game Mode", self.start_frame)
+        self.game_mode_button.setStyleSheet("""
             QPushButton {
-                background-color: #009688;
+                background-color: #000080;
                 color: white;
                 border: none;
                 border-radius: 10px;
@@ -58,13 +80,48 @@ class MainWindow(QWidget):
                 min-width: 400px;
             }
             QPushButton:hover {
-                background-color: #00796B; /* Darken color on hover */
+                background-color: #191970; /* Darken color on hover */
             }
         """)
-        self.start_button.clicked.connect(self.start_game)
-        self.start_frame_layout.addWidget(self.start_button)
+        self.game_mode_button.clicked.connect(self.game_mode)
+        self.start_frame_layout.addWidget(self.game_mode_button)
 
         self.main_layout.addWidget(self.start_frame)
+
+        # Game mode frame
+        self.game_mode_frame = QWidget(self)
+        self.game_mode_frame_layout = QVBoxLayout(self.game_mode_frame)
+        self.game_mode_frame_layout.setAlignment(Qt.AlignCenter)
+
+        # Choose game mode text
+        self.game_mode_message = QLabel("Please choose a game mode", self.game_mode_frame)
+        self.game_mode_message.setAlignment(Qt.AlignCenter) 
+        self.game_mode_message.setStyleSheet("font-size: 24px; color: #FFFFFF;")
+        self.game_mode_frame_layout.addWidget(self.game_mode_message)
+
+        # Fruit guesser button
+        self.fruit_guesser_button = QPushButton("Fruit Guesser", self.game_mode_frame)
+        self.fruit_guesser_button.setStyleSheet("""
+            QPushButton {
+                background-color: #000080;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                padding: 15px 30px;
+                font-size: 18px;
+                min-width: 400px;
+            }
+            QPushButton:hover {
+                background-color: #191970; /* Darken color on hover */
+            }
+        """)
+        self.fruit_guesser_button.clicked.connect(self.start_game)
+        self.game_mode_frame_layout.addWidget(self.fruit_guesser_button)
+
+        # Hide game mode frame initially
+        self.game_mode_frame.hide()
+
+        self.main_layout.addWidget(self.game_mode_frame)
 
         # Game frame
         self.game_frame = QWidget(self)
@@ -88,37 +145,50 @@ class MainWindow(QWidget):
         # Chat box
         self.chat_box = QTextEdit(self.game_frame)
         self.chat_box.setReadOnly(True)
-        self.chat_box.setFixedHeight(450)  # Set fixed height
+        self.chat_box.setFixedHeight(350)  # Set fixed height
         self.chat_box.setFixedWidth(650)  # Set fixed width
+       
+        # Set font size
+        font = self.chat_box.font()
+        font.setPointSize(10)  # Adjust the font size as needed
+        self.chat_box.setFont(font)
+
         self.chat_box.setStyleSheet("""
-            QTextEdit {
-                border: 1px solid #ccc; /* Add border */
-                border-radius: 10px; /* Rounded corners */
-                padding: 5px; /* Add padding */
-                background-color: white;
-            }
-            QTextEdit:focus {
-                border: 2px solid #009688; /* Border color on focus */
-            }
-            QTextEdit {
-                border-bottom: 5px solid rgba(0,0,0,0.1); /* Add shadow */
-                border-right: 5px solid rgba(0,0,0,0.1); /* Add shadow */
-            }
-        """)
+             QTextEdit {
+                  border: 2px solid #FF00FF; /* Neon purple border */
+                    border-radius: 10px; /* Rounded corners */
+                    padding: 5px; /* Add padding */
+                    background-color: #4B0082;
+                    color: #FFFFFF;
+                }
+                QTextEdit:focus {
+                    border: 2px solid #FF00FF; /* Neon purple border on focus */
+                }
+                QTextEdit {
+                    border-bottom: 5px solid rgba(0,0,0,0.1); /* Add shadow */
+                    border-right: 5px solid rgba(0,0,0,0.1); /* Add shadow */
+                }
+            """)
         self.chat_layout.addWidget(self.chat_box)
 
         # Answer entry box
         self.answer_entry = QLineEdit(self.game_frame)
         self.answer_entry.setFixedWidth(650)
-        self.answer_entry.setFixedHeight(100)
+        self.answer_entry.setFixedHeight(60)
+
+        font = self.answer_entry.font()
+        font.setPointSize(12) 
+        self.answer_entry.setFont(font)
+
         self.answer_entry.setStyleSheet("""
             QLineEdit {
-                border: 1px solid #ccc; /* Add border */
+              border: 2px solid #FF00FF; /* Neon purple border */
                 border-radius: 10px; /* Rounded corners */
-                background-color: white;
+                background-color: #4B0082;
+                color: #FFFFFF;
             }
             QLineEdit:focus {
-                border: 2px solid #009688; /* Border color on focus */
+                border: 2px solid #FF00FF; /* Neon purple border on focus */
             }
             QLineEdit {
                 border-bottom: 5px solid rgba(0,0,0,0.1); /* Add shadow */
@@ -130,18 +200,64 @@ class MainWindow(QWidget):
         self.center_layout.addLayout(self.chat_layout)  # Add chat layout to center layout
         self.game_frame_layout.addLayout(self.center_layout)  # Add center layout to game frame layout
 
+        
+
+        # Hide game frame initially
+        self.game_frame.hide()
+
         self.main_layout.addWidget(self.game_frame)
 
-        # Initially hide game frame
-        self.game_frame.hide()
+         # Create the volume slider
+        self.volume_slider = QSlider(Qt.Vertical, self.game_frame)
+        self.volume_slider.setParent(self)
+        self.volume_slider.setRange(0, 100)
+        self.volume_slider.setValue(100)  # Initial volume set to maximum
+        self.volume_slider.valueChanged.connect(self.adjust_volume)
+        self.volume_slider.setGeometry(55, 110, 30, 200)  # Adjust the position of the volume slider
+        self.volume_slider.raise_()
+
+
+    def setup_audio(self):
+        # Create a media player
+        self.media_player = QMediaPlayer()
+        # Load the audio file
+        self.media_player.setMedia(QMediaContent(QUrl.fromLocalFile("sound\Indigo Future Melody.wav")))
+        self.media_player.play()
+        # Connect the media player's mediaStatusChanged signal to check for end of media playback
+        self.media_player.mediaStatusChanged.connect(self.check_media_status)
+
+    def check_media_status(self, status):
+        # Check if the media playback has reached the end
+     if status == QMediaPlayer.EndOfMedia:
+        # Restart media playback from the beginning
+        self.media_player.setPosition(0)
+        self.media_player.play()
+
 
     def start_game(self):
         print("Starting the game...")
-        self.start_frame.hide()
+        # Hide game mode frame
+        self.game_mode_frame.hide()
+        # Show game frame
         self.game_frame.show()
-
         # Start the fruit guessing game
         self.play_game()
+
+    def setup_connections(self):
+        # Connect the custom signal to restart media playback
+        self.media_finished.connect(self.restart_media)
+
+    def restart_media(self):
+        # Restart media playback from the beginning
+        self.media_player.setPosition(0)
+        self.media_player.play()    
+
+    def game_mode(self):
+        print("Entering game mode...")
+        # Hide start frame
+        self.start_frame.hide()
+        # Show game mode frame
+        self.game_mode_frame.show()
 
     def play_game(self):
         # Call guess_fruit to get the initial question and additional questions
@@ -175,6 +291,10 @@ class MainWindow(QWidget):
 
     def update_output(self, sender, message):
         self.chat_box.append(f"{sender}: {message}")
+
+    def adjust_volume(self, volume_level):
+        # Set the volume level
+        self.media_player.setVolume(volume_level)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
