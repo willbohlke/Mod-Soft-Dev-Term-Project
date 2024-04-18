@@ -45,16 +45,19 @@ class Similarity:
     def get_guesses(self, input):
         print("> Thinking...")
         descriptions_list = self.get_descriptions()
+
         # Lemmatize descriptions and input
         texts = [self.lemmatize_text(text) for text in descriptions_list.values()] + [self.lemmatize_text(input)]
         vectorizer = TfidfVectorizer(stop_words='english').fit_transform(texts)
         similarities = cosine_similarity(vectorizer[-1], vectorizer[:-1])
         similarity_dict = dict(zip(descriptions_list.keys(), similarities[0]))
+        
         # Convert scores to percentages and round to 2 decimal places
         similarity_dict = {k: round(v * 100, 2) for k, v in similarity_dict.items()}
         # Filter scores that are above 0
         top_guesses = {k: v for k, v in similarity_dict.items() if v > 0}
         sorted_guesses = sorted(top_guesses.items(), key=lambda x: x[1], reverse=True)
+        
         if sorted_guesses:
             # Return top 5 scores or less if there are less than 5
             top_guess = sorted_guesses[0]

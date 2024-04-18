@@ -24,7 +24,23 @@ with open(file_path, 'r') as file:
         # Strip any newlines and add to the list
         object_list.append(line.strip())
 
-similarity = Similarity(object_list, object_type)
-input = input("> Enter a description of the " + os.path.splitext(object_type)[0] + " you're thinking of: \n> ")
-similarity_scores = similarity.get_guesses(input)
-print(similarity_scores)
+while True:
+    similarity = Similarity(object_list, object_type)
+    user_desc = input("> Enter a description of the " + os.path.splitext(object_type)[0] + " you're thinking of: \n> ")
+    similarity_scores = similarity.get_guesses(user_desc)
+    print(similarity_scores)
+
+    # Receive user input here and check for various responses
+    print(f"> Is it a {similarity_scores[1][0]}?")
+    user_response = input("> ").lower()
+
+    affirmative_responses = ['yes', 'yeah', 'yep', 'correct', 'that\'s right', 'exactly']
+    negative_responses = ['no', 'nope', 'nah', 'incorrect', 'wrong', 'not quite']
+
+    if user_response in affirmative_responses:
+        print("> Hooray! I guessed it! Thanks for playing.")
+        exit()
+    elif user_response in negative_responses:
+        print("> Oh, sorry to hear that. Let's keep trying.")
+    else:
+        print("> I'm sorry, I didn't understand your response. Let's keep trying.")
