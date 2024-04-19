@@ -13,3 +13,5 @@ pip install PyQt5
 ```
 
 ## How to play:
+1. install the modules listed above
+2. run gui.py and the game should load!
