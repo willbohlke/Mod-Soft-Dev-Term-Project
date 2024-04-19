@@ -1,5 +1,7 @@
 # Mod-Soft-Dev-Term-Project
 
+This is our guessing program based on the original ELIZA script. The user can load .txt files into /Game Modes containing a list of whatever they want the program to guess. The program will then use API's and NLP to retrieve info related to the items listed and then formulate guesses based on what the user has described. 
+
 ## Requirements (Run these in the terminal of your environment before using):
 
 ```python
@@ -14,4 +16,4 @@ pip install PyQt5
 
 ## How to play:
 1. install the modules listed above
-2. run gui.py and the game should load!
+2. run gui.py and the game will load!
