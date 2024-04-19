@@ -42,6 +42,7 @@ class Similarity:
         lemmatized_text = " ".join([token.lemma_ for token in doc])
         return lemmatized_text
 
+    
     def get_guesses(self, input):
         print("> Thinking...")
         descriptions_list = self.get_descriptions()
@@ -64,14 +65,14 @@ class Similarity:
         top_guesses = {k: v for k, v in similarity_dict.items() if v > 0}
         sorted_guesses = sorted(top_guesses.items(), key=lambda x: x[1], reverse=True)
         
+        guess_strength = "none"  # Default value
+        top_guesses = []  # Default empty list
+
         if sorted_guesses:
             # Return top 3 guesses
             top_guesses = sorted_guesses[:3]
-            guess_strength = ""
             score = top_guesses[0][1]
-            if score == 0:
-                guess_strength = "none"
-            elif score < 50:
+            if score < 50:
                 guess_strength = "weak"
             elif score < 70:
                 guess_strength = "moderate"
@@ -79,4 +80,6 @@ class Similarity:
                 guess_strength = "strong"
             else:
                 guess_strength = "very strong"
+
         return guess_strength, top_guesses
+
