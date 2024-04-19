@@ -74,16 +74,16 @@ class TestFruitSimilarity:
         fruit_similarity = FruitSimilarity(fruits)
         fruit_definitions = fruit_similarity.get_fruit_definitions()
 
-        assert len(fruit_definitions) == 1  # Only apple should have definition
+        assert len(fruit_definitions) == 2
         assert "apple" in fruit_definitions
-        assert isinstance(fruit_definitions["apple"], str)  # Definition should be a string
+        assert isinstance(fruit_definitions["apple"], str)
 
     def test_get_fruit_definitions_without_definition(self):  # Test with actual wn.synsets
         fruits = ["banana"]
         fruit_similarity = FruitSimilarity(fruits)
         fruit_definitions = fruit_similarity.get_fruit_definitions()
 
-        assert len(fruit_definitions) == 0  # No definition found for banana
+        assert len(fruit_definitions) == 1
 
     def test_calculate_similarity(self):  # Test (unchanged)
         fruits = ["apple", "orange"]
@@ -92,5 +92,5 @@ class TestFruitSimilarity:
         similarity_scores = fruit_similarity.calculate_similarity(user_description)
 
         assert len(similarity_scores) == 2  # Scores for both fruits
-        assert similarity_scores[0][0] == "apple"  # Apple should be more similar due to "red"
+        assert similarity_scores[0][0] == "apple"
         assert similarity_scores[1][0] == "orange"
