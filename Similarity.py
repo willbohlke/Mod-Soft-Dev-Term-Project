@@ -30,7 +30,7 @@ class Similarity:
             description = ""
             # Get the text from the sections with the most relevant titles
             for section in page.sections:
-                if section.title in [self.object_type, 'Characteristics', 'Description', 'Skin']:
+                if section.title in [self.object_type, 'Plot', 'Cast', 'Narrative', 'Narative']:
                     description += section.text + "\n"
             description += page.summary
             descriptions[object] = description
