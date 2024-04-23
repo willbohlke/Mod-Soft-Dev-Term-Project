@@ -9,6 +9,7 @@ class InteractivePromptGUI(QMainWindow):
         self.game = ELIZAGame()  # Make sure ELIZAGame is properly initialized
         self.initUI()
         self.start_game()  # Start the game when the GUI is initialized
+        self.game_mode_selected = False  # Track if a game mode has been selected
 
     def initUI(self):
         try:
@@ -51,12 +52,20 @@ class InteractivePromptGUI(QMainWindow):
         try:
             user_input = self.line_edit.text()
             self.text_browser.append(f"User: {user_input}")
-            response = self.game.play(user_input)  # Get the response from the game
-            if response is not None:  # Make sure response is not None before calling get_guesses
+            if not self.game_mode_selected:
+                # If a game mode hasn't been selected, try to select it
+                response = self.game.select_game_mode(user_input)
+                if response.startswith("> Category selected"):
+                    self.game_mode_selected = True
+            else:
+                # Once a game mode is selected, process input as game play
+                response = self.game.play(user_input)
+            
+            if response:
                 self.text_browser.append(f"ELIZA: {response}")
             self.line_edit.clear()
         except Exception as e:
-            print(f"Error in process_input: {e}")
+            self.text_browser.append(f"Error in process_input: {e}")
 
 # To run the application:
 if __name__ == "__main__":

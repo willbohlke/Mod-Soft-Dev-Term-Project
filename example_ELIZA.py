@@ -1,6 +1,7 @@
 
 from Similarity import Similarity
 import os
+import threading
 
 class ELIZAGame:
     def __init__(self):
@@ -22,13 +23,13 @@ class ELIZAGame:
     def select_game_mode(self, game_mode):
         self.object_type = game_mode + ".txt"
         if self.object_type not in self.txt_files:
-            return "> Invalid game mode. Please select a valid game mode."
+            return "> Invalid selection. Please select a valid category."
         file_path = os.path.join('Game Modes', self.object_type)
         with open(file_path, 'r') as file:
             for line in file:
                 self.object_list.append(line.strip())
         self.similarity = Similarity(self.object_list, self.object_type)
-        return "> Game mode selected. Describe the object you're thinking of."
+        return "> Category selected. Describe the " + self.object_type + " you're thinking of."
 
     def play(self, description):
         if not self.similarity:
@@ -36,10 +37,14 @@ class ELIZAGame:
         
         self.description += description + " "
         if self.guesses_made < self.max_guesses and self.questions_asked < self.max_questions:
-            self.similarity_scores = self.similarity.get_guesses(self.description)
-            self.questions_asked += 1
-            return self.similarity_scores
+            # Start a new thread to run get_guesses
+            threading.Thread(target=self.get_guesses_thread).start()
+            return "Thinking..."
         elif self.guesses_made >= self.max_guesses or self.questions_asked >= self.max_questions:
             return "> No more guesses or questions allowed."
 
-# Removing the direct execution part to ensure it doesn't conflict with the GUI
+    def get_guesses_thread(self):
+        self.similarity_scores = self.similarity.get_guesses(self.description)
+        self.questions_asked += 1
+
+# Removed the direct execution part to ensure it doesn't conflict with the GUI

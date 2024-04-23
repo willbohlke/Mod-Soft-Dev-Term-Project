@@ -30,7 +30,7 @@ class Similarity:
             description = ""
             # Get the text from the sections with the most relevant titles
             for section in page.sections:
-                if section.title in [self.object_type, 'Plot', 'Cast', 'Narrative', 'Narative']:
+                if section.title in [self.object_type, 'Plot', 'Cast', 'Voice_cast','Narrative', 'Early_life']:
                     description += section.text + "\n"
             description += page.summary
             descriptions[object] = description
@@ -44,7 +44,7 @@ class Similarity:
 
     
     def get_guesses(self, input):
-        print("> Thinking...")
+        # print("> Thinking...")
         descriptions_list = self.get_descriptions()
 
         # Lemmatize descriptions and input
