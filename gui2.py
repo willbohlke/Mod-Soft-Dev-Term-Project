@@ -44,25 +44,35 @@ class InteractivePromptGUI(QMainWindow):
     def start_game(self):
         try:
             start_message = self.game.start_game()  # Get the start message from the game
-            self.text_browser.append(f"ELIZA: {start_message}")
+            self.text_browser.append(f"> ELIZA: {start_message}")
         except Exception as e:
             print(f"Error in start_game: {e}")
 
     def process_input(self):
         try:
             user_input = self.line_edit.text()
-            self.text_browser.append(f"User: {user_input}")
+            self.text_browser.append(f"> {user_input}")
             if not self.game_mode_selected:
                 # If a game mode hasn't been selected, try to select it
                 response = self.game.select_game_mode(user_input)
-                if response.startswith("> Category selected"):
+                if response.startswith("Category selected"):
                     self.game_mode_selected = True
             else:
                 # Once a game mode is selected, process input as game play
                 response = self.game.play(user_input)
-            
-            if response:
-                self.text_browser.append(f"ELIZA: {response}")
+            yes = ["yes", "yep", "yeah", "yup", "certainly", "absolutely", "sure"]
+            no = ["no", "nope", "nah", "not", "negative"]
+            # Check if the user's input is a synonym for "yes" or "no"
+            if "Is it" in response and user_input.lower() in yes:
+                self.text_browser.append(f"> ELIZA: Glad I could help!")
+                self.line_edit.setDisabled(True)  # Disable user input
+                return  # End the game
+            elif "Is it" in response and user_input.lower() in no:
+                self.text_browser.append(f"> ELIZA: I'm sorry I couldn't guess it. Let's try again!")
+                self.line_edit.setDisabled(True)  # Disable user input
+                return  # End the game
+            else:
+                self.text_browser.append(f"> ELIZA: {response}")
             self.line_edit.clear()
         except Exception as e:
             self.text_browser.append(f"Error in process_input: {e}")
