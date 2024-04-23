@@ -10,7 +10,7 @@ class ELIZAGame:
         self.object_list = []
         self.guesses_made = 0
         self.max_guesses = 3
-        self.questions_asked = 0
+        self.questions_asked = 1
         self.max_questions = 5
         self.description = ""
         self.similarity = None
@@ -33,20 +33,23 @@ class ELIZAGame:
     def play(self, description):
         if not self.similarity:
             return "> Error: Game mode not properly initialized or similarity object not created."
-        
         self.description += description + " "
-        while self.guesses_made < self.max_guesses and self.questions_asked < self.max_questions:
-            guess_strength, top_guesses = self.similarity.get_guesses(self.description)
+        guess_strength, top_guesses = self.similarity.get_guesses(self.description)
+        top_guess = top_guesses[0][0]
+
+        while self.questions_asked < self.max_questions:
+            # guess_strength, top_guesses = self.similarity.get_guesses(self.description)
             self.questions_asked += 1
+            remaining = str(self.max_questions - self.questions_asked)
+
             if guess_strength == 'strong':
-                top_guess = top_guesses[0]
                 return f"> Is it {top_guess}?"
             elif guess_strength == 'moderate':
-                output = "I almost got it! Describe it more: "
+                output = "I almost got it! Describe it more: (" + remaining + " remaining)"
             elif guess_strength == 'weak':
-                output = "I have a vague idea, give me another hint: "
+                output = "I have a vague idea, give me another hint: (" + remaining + " remaining)"
             return output
-        if self.guesses_made >= self.max_guesses or self.questions_asked >= self.max_questions:
-            return "> No more guesses or questions allowed."
+        
+        return f"> is it {top_guess}?"
 
 # Removed the direct execution part to ensure it doesn't conflict with the GUI

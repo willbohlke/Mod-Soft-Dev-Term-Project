@@ -76,10 +76,8 @@ class Similarity:
                 guess_strength = "weak"
             elif score < 70:
                 guess_strength = "moderate"
-            elif score < 85:
-                guess_strength = "strong"
             else:
-                guess_strength = "very strong"
+                guess_strength = "strong"
 
         return guess_strength, top_guesses
 
