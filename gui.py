@@ -3,6 +3,7 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QUrl
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+
 import sys
 
 class BackgroundWidget(QWidget):
@@ -99,7 +100,7 @@ class MainWindow(QWidget):
         self.game_mode_frame_layout.addWidget(self.game_mode_message)
 
         # Fruit guesser button
-        self.fruit_guesser_button = QPushButton("Fruit Guesser", self.game_mode_frame)
+        self.fruit_guesser_button = QPushButton("Film", self.game_mode_frame)
         self.fruit_guesser_button.setStyleSheet("""
             QPushButton {
                 background-color: #000080;
@@ -114,7 +115,7 @@ class MainWindow(QWidget):
                 background-color: #191970; /* Darken color on hover */
             }
         """)
-        self.fruit_guesser_button.clicked.connect(self.start_game)
+        self.fruit_guesser_button.clicked.connect(lambda: self.start_game("film"))
         self.game_mode_frame_layout.addWidget(self.fruit_guesser_button)
 
 
@@ -252,14 +253,14 @@ class MainWindow(QWidget):
         self.media_player.play()
 
 
-    def start_game(self):
+    def start_game(self, gm):
         print("Starting the game...")
         # Hide game mode frame
         self.game_mode_frame.hide()
         # Show game frame
         self.game_frame.show()
         # Start the fruit guessing game
-        self.play_game()
+        self.play_game(gm)
 
     def setup_connections(self):
         # Connect the custom signal to restart media playback
@@ -277,18 +278,20 @@ class MainWindow(QWidget):
         # Show game mode frame
         self.game_mode_frame.show()
 
-    def play_game(self):
+    def play_game(self, gm):
         print("Starting the game...")
         # Hide game mode frame
         self.game_mode_frame.hide()
         # Show game frame
         self.game_frame.show()
+
         # Start the fruit guessing game
         self.user_description = ""  # Reset user description
         self.asked_questions = []   # Initialize asked questions list
         self.update_output("System", "Think of a fruit and I'll try to guess it! Describe your fruit: ")
         self.answer_entry.show()
         self.answer_entry.returnPressed.connect(lambda: self.process_response(self.answer_entry.text()))
+
 
 
     def process_response(self, response):
