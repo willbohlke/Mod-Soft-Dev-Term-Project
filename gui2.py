@@ -1,11 +1,16 @@
 
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTextBrowser, QLineEdit, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTextBrowser, QLineEdit, QPushButton, QVBoxLayout, QWidget, QHBoxLayout
+from PyQt5.QtCore import Qt, pyqtSignal, QTimer
+from PyQt5.QtGui import QColor, QImage, QPalette, QBrush, QTextCursor
+from PyQt5.QtCore import QUrl
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from example_ELIZA import ELIZAGame
 
 class InteractivePromptGUI(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.thinking_dots = 0
         self.game = ELIZAGame()  # Make sure ELIZAGame is properly initialized
         self.initUI()
         self.start_game()  # Start the game when the GUI is initialized
@@ -14,9 +19,16 @@ class InteractivePromptGUI(QMainWindow):
     def initUI(self):
         try:
             # Set up the main window
-            self.setWindowTitle('Interactive Terminal Prompt')
-            self.setGeometry(100, 100, 480, 320)
+            self.setWindowTitle('ELIZA Guess Bot')
+            self.setGeometry(100, 100, 1400, 800)
             
+            # Set the background image
+            palette = QPalette()
+            image = QImage("images/background.png")  # Load the image file
+            scaled_image = image.scaled(1400, 800)  # Scale the image to fit the window
+            palette.setBrush(QPalette.Background, QBrush(scaled_image))
+            self.setPalette(palette)
+
             # Create central widget and layout
             central_widget = QWidget(self)
             self.setCentralWidget(central_widget)
@@ -24,22 +36,45 @@ class InteractivePromptGUI(QMainWindow):
             
             # Text Browser to display conversation
             self.text_browser = QTextBrowser(self)
+            text_browser_palette = self.text_browser.palette()
+            text_browser_palette.setColor(QPalette.Base, QColor(255, 255, 255, 0))  # Set base color to transparent
+            self.text_browser.setPalette(text_browser_palette)
+            self.text_browser.setStyleSheet("font-size: 36px; font-weight: bold; color: #FFFFFF")
             layout.addWidget(self.text_browser)
             
-            # Line Edit for user input
+            # Line Edit for user input and Button to submit input
+            input_layout = QHBoxLayout()
             self.line_edit = QLineEdit(self)
-            layout.addWidget(self.line_edit)
-            
-            # Button to submit input
+            line_edit_palette = self.line_edit.palette()
+            line_edit_palette.setColor(QPalette.Base, QColor(255, 255, 255, 0))  # Set base color to transparent
+            self.line_edit.setPalette(line_edit_palette)
+            self.line_edit.setStyleSheet("font-size: 36px; font-weight: bold; color: #FFFFFF")
+            input_layout.addWidget(self.line_edit)
             self.submit_button = QPushButton('Submit', self)
-            layout.addWidget(self.submit_button)
+            self.submit_button.setStyleSheet("""
+                QPushButton {
+                    background-color: #000080;
+                    color: white;
+                    border: none;
+                    border-radius: 10px;
+                    padding: 15px 30px;
+                    font-size: 18px;
+                    min-width: 250px;
+                }
+                QPushButton:hover {
+                    background-color: #191970; /* Darken color on hover */
+                }
+            """)
+            input_layout.addWidget(self.submit_button)
+            layout.addLayout(input_layout)
             
             # Connect button to the function to process input
             self.submit_button.clicked.connect(self.process_input)
+            # Connect return key press in line edit to button click
+            self.line_edit.returnPressed.connect(self.submit_button.click)
 
-            self.show()  # Ensure the window is shown
         except Exception as e:
-            print(f"Error in initUI: {e}")
+            self.text_browser.append(f"Error in initUI: {e}")
 
     def start_game(self):
         try:
@@ -52,6 +87,7 @@ class InteractivePromptGUI(QMainWindow):
         try:
             user_input = self.line_edit.text()
             self.text_browser.append(f"> {user_input}")
+
             if not self.game_mode_selected:
                 # If a game mode hasn't been selected, try to select it
                 response = self.game.select_game_mode(user_input)
@@ -60,6 +96,7 @@ class InteractivePromptGUI(QMainWindow):
             else:
                 # Once a game mode is selected, process input as game play
                 response = self.game.play(user_input)
+
             yes = ["yes", "yep", "yeah", "yup", "certainly", "absolutely", "sure"]
             no = ["no", "nope", "nah", "not", "negative"]
             # Check if the user's input is a synonym for "yes" or "no"

@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QUrl
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
-from example_ELIZA import main as eliza_main
+# from example_ELIZA import main as eliza_main
 import sys
 
 class BackgroundWidget(QWidget):
