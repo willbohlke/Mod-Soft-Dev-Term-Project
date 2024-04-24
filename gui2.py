@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, QTimer
 from PyQt5.QtGui import QColor, QImage, QPalette, QBrush, QTextCursor
 from PyQt5.QtCore import QUrl
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
-from example_ELIZA import ELIZAGame
+from ELIZA_logic import ELIZAGame
 
 class InteractivePromptGUI(QMainWindow):
     def __init__(self):
