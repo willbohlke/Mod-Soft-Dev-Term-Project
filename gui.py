@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QUrl
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
-# from example_ELIZA import main as eliza_main
+
 import sys
 
 class BackgroundWidget(QWidget):
@@ -285,8 +285,13 @@ class MainWindow(QWidget):
         # Show game frame
         self.game_frame.show()
 
-        # Call main() with gm as the argument
-        eliza_main(gm, True)
+        # Start the fruit guessing game
+        self.user_description = ""  # Reset user description
+        self.asked_questions = []   # Initialize asked questions list
+        self.update_output("System", "Think of a fruit and I'll try to guess it! Describe your fruit: ")
+        self.answer_entry.show()
+        self.answer_entry.returnPressed.connect(lambda: self.process_response(self.answer_entry.text()))
+
 
 
     def process_response(self, response):
@@ -298,8 +303,6 @@ class MainWindow(QWidget):
         # Append the user's response to the chat box
         self.update_output("User", response)
 
-        # Pass the user_description string to fruit_questions, along with asked questions
-        self.questions = fruit_questions(self.user_description.strip(), self.asked_questions)
 
         # Display the next question from the list of questions
         if self.questions:
