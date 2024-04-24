@@ -15,6 +15,7 @@ class InteractivePromptGUI(QMainWindow):
         self.initUI()
         self.start_game()  # Start the game when the GUI is initialized
         self.game_mode_selected = False  # Track if a game mode has been selected
+        self.setup_audio()
 
     def initUI(self):
         try:
@@ -113,6 +114,37 @@ class InteractivePromptGUI(QMainWindow):
             self.line_edit.clear()
         except Exception as e:
             self.text_browser.append(f"Error in process_input: {e}")
+
+
+    def setup_audio(self):
+        # Create a media player
+        self.media_player = QMediaPlayer()
+        # Load the audio file
+        self.media_player.setMedia(QMediaContent(QUrl.fromLocalFile("sound\Indigo Future Melody.wav")))
+        self.media_player.setVolume(20)
+        self.media_player.play()
+        # Connect the media player's mediaStatusChanged signal to check for end of media playback
+        self.media_player.mediaStatusChanged.connect(self.check_media_status)
+
+    def setup_connections(self):
+        # Connect the custom signal to restart media playback
+        self.media_finished.connect(self.restart_media)
+
+    def check_media_status(self, status):
+        # Check if the media playback has reached the end
+     if status == QMediaPlayer.EndOfMedia:
+        # Restart media playback from the beginning
+        self.media_player.setPosition(0)
+        self.media_player.play()
+
+
+    def restart_media(self):
+        # Restart media playback from the beginning
+        self.media_player.setPosition(0)
+        self.media_player.play()    
+
+  
+
 
 # To run the application:
 if __name__ == "__main__":
