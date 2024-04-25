@@ -1,95 +1,116 @@
 
-from Similarity import Similarity
-from PyQt5.QtCore import QTimer, pyqtSignal, QObject
-import threading
 import os
+from Similarity import Similarity
 
-class ELIZAGame(QObject):
-    stop_timer_signal = pyqtSignal()
-
+class ELIZAGame():
     def __init__(self):
-        super().__init__()
         self.txt_files = [f for f in os.listdir('Game Modes') if f.endswith('.txt')]
-        self.game_modes = ', '.join([os.path.splitext(f)[0] for f in self.txt_files])
+        self.game_modes = {os.path.splitext(f)[0]: None for f in self.txt_files}  # Store game modes and their data
         self.object_type = None
-        self.object_list = []
         self.guesses_made = 0
         self.max_guesses = 3
-        self.questions_asked = 1
+        self.questions_asked = 0
         self.max_questions = 5
-        self.description = ""
+        self.user_in = ""
         self.similarity = None
-        self.similarity_scores = []
         self.thinking_dots = 0
-        self.stop_timer_signal.connect(self.stop_timer)
+        self.waiting_for_confirmation = False
+        self.last_guess = None
+
+        # question bank
+        self.question_bank = {
+            'film': [
+                "What genre is the film?",
+                "Who directed the film?",
+                "Who are the main actors in the film?",
+                "When was the film released?",
+                "Is the film part of a series or franchise?",
+            ],
+            'book': [
+                "What genre is the book?",
+                "Who is the author of the book?",
+                "When was the book published?",
+                "Is the book part of a series?",
+                "What is the main theme of the book?",
+            ],
+            'celebrity': [
+                "What is the profession of the celebrity?",
+                "Is the celebrity known for a particular role?",
+                "Is the celebrity known for a particular event?",
+                "Is the celebrity known for a particular achievement?",
+                "Is the celebrity known for a particular controversy?",
+            ]
+        }
 
     def start_game(self):
-        return "Welcome to the ELIZA Guess Bot, please enter what you want me to guess: " + self.game_modes
+        available_modes = ', '.join(self.game_modes.keys())
+        return f"> Welcome to the ELIZA Guess Bot, I will guess a {available_modes} that you're thinking of in 5 responses or less! \n> Please enter what you want me to guess: " + available_modes
 
     def select_game_mode(self, game_mode):
-        self.object_type = game_mode + ".txt"
-        if self.object_type not in self.txt_files:
-            return "Invalid selection. Please select a valid category."
-        file_path = os.path.join('Game Modes', self.object_type)
-        with open(file_path, 'r') as file:
-            for line in file:
-                self.object_list.append(line.strip())
-        self.similarity = Similarity(self.object_list, self.object_type)
-        return "Category selected. Describe the " + self.object_type[:-4] + " you're thinking of."
+        if game_mode not in self.game_modes:
+            return f"Invalid selection. Please select a valid category from {list(self.game_modes.keys())}."
 
-    def play(self, description):
-        if not self.similarity:
-            return "> Error: Game mode not properly initialized or similarity object not created."
-        self.description += description + " "
+        if self.game_modes[game_mode] is None:  # Load game mode data if not already loaded
+            file_path = os.path.join('Game Modes', game_mode + '.txt')
+            if not os.path.exists(file_path):
+                return f"Error: The file for {game_mode} does not exist at {file_path}."
+            with open(file_path, 'r') as file:
+                self.game_modes[game_mode] = [line.strip() for line in file]
 
-        # Start the thinking animation
-        self.thinking_timer = QTimer()
-        self.thinking_timer.timeout.connect(self.update_thinking_animation)
-        self.thinking_timer.start(500)  # Update the animation every 500 ms
-
-        # Define the function to run in a separate thread
-        def get_guesses_thread():
-            self.guess_strength, self.top_guesses = self.similarity.get_guesses(self.description)
-            self.stop_timer_signal.emit()  # Emit the signal to stop the timer
-            self.guesses_ready.set()  # Set the event to signal that the guesses are ready
-
-        # Create and start the thread
-        self.guesses_ready = threading.Event()
-        thread = threading.Thread(target=get_guesses_thread)
-        thread.start()
-
-        # Wait for the guesses to be ready
-        self.guesses_ready.wait()
-
-        top_guess = self.top_guesses[0][0]
-
-        while self.questions_asked < self.max_questions:
-            # guess_strength, top_guesses = self.similarity.get_guesses(self.description)
-            self.questions_asked += 1
-            remaining = str(self.max_questions - self.questions_asked)
-
-            if self.guess_strength == 'strong':
-                return f"Is it {top_guess}?"
-            elif self.guess_strength == 'moderate':
-                output = "I almost got it! Describe it more: (" + remaining + " remaining)"
-            elif self.guess_strength == 'weak':
-                output = "I have a vague idea, give me another hint: (" + remaining + " remaining)"
-            return output
+        self.object_list = self.game_modes[game_mode]
+        self.object_type = game_mode
+        try:
+            self.similarity = Similarity(self.object_list, self.object_type)
+        except Exception as e:
+            return f"Failed to create a similarity object: {str(e)}"
         
-        return f"Is it {top_guess}?"
-    
-    def stop_timer(self):
-        self.thinking_timer.stop()
-    
-    def update_thinking_animation(self):
-        # Update the thinking animation
-        self.thinking_dots += 1
-        if self.thinking_dots > 3:
-            self.thinking_dots = 0
-        self.thinking_text = "Thinking" + "." * self.thinking_dots
-        return self.thinking_text
-    
-    
-    
+        return f"Category '{game_mode}' selected. To start, give me a brief summary of the {game_mode} you're thinking of:"
 
-# Removed the direct execution part to ensure it doesn't conflict with the GUI
+    def play(self, user_in):
+        if not self.similarity:
+            return "Error: Game mode not properly initialized or similarity object not created."
+        self.user_in += user_in + " "
+        return self.process_input(user_in)     
+    
+    def process_input(self, user_input):
+        if self.waiting_for_confirmation:
+            if user_input.lower() in ['yes', 'y', 'yeah', 'yep', 'sure', 'right', 'correct']:
+                self.waiting_for_confirmation = False
+                self.last_guess = None
+                return "Woo hoo! Let's play again. Please select a category."
+            else:
+                self.waiting_for_confirmation = False
+                self.last_guess = None
+                remaining_questions = self.max_questions - self.questions_asked
+                return f"Darn! I'll get it next time!"
+
+        guess, score = self.similarity.get_guesses(user_input)
+        self.questions_asked += 1
+
+        print(self.user_in)
+        print(f"{guess} {score}")
+
+
+        if self.questions_asked >= self.max_questions:
+            self.last_guess = guess
+            self.waiting_for_confirmation = True
+            return f"Maximum number of questions reached. Is it {guess}?"
+
+        if score > 0.30:
+            self.waiting_for_confirmation = True
+            self.last_guess = guess
+            return f"Is it {guess}?"
+        else:
+            remaining_questions = self.max_questions - self.questions_asked
+            # choose a random question from the question bank that mathces the object type
+            question = self.question_bank[self.object_type][self.questions_asked]
+            return f"{question} ({remaining_questions} remaining):"
+
+
+# Example usage to debug
+# game = ELIZAGame()
+# print(game.start_game())
+# response = game.select_game_mode('film')
+# print(response)
+# if 'Failed' not in response:
+#     print(game.play('A description of something'))
