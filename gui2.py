@@ -1,11 +1,11 @@
 
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTextBrowser, QLineEdit, QPushButton, QVBoxLayout, QWidget, QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTextBrowser, QLineEdit, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QFrame
 from PyQt5.QtCore import Qt, pyqtSignal, QTimer
 from PyQt5.QtGui import QColor, QImage, QPalette, QBrush, QTextCursor
 from PyQt5.QtCore import QUrl
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
-from example_ELIZA import ELIZAGame
+from ELIZA_logic import ELIZAGame
 
 class InteractivePromptGUI(QMainWindow):
     def __init__(self):
@@ -16,6 +16,8 @@ class InteractivePromptGUI(QMainWindow):
         self.start_game()  # Start the game when the GUI is initialized
         self.game_mode_selected = False  # Track if a game mode has been selected
         self.setup_audio()
+        self.is_muted = False
+
 
     def initUI(self):
         try:
@@ -42,6 +44,7 @@ class InteractivePromptGUI(QMainWindow):
             self.text_browser.setPalette(text_browser_palette)
             self.text_browser.setStyleSheet("font-size: 36px; font-weight: bold; color: #FFFFFF")
             layout.addWidget(self.text_browser)
+            
             
             # Line Edit for user input and Button to submit input
             input_layout = QHBoxLayout()
@@ -73,6 +76,42 @@ class InteractivePromptGUI(QMainWindow):
             self.submit_button.clicked.connect(self.process_input)
             # Connect return key press in line edit to button click
             self.line_edit.returnPressed.connect(self.submit_button.click)
+            
+            # Options Button
+            self.options_button = QPushButton('Options', self)
+            self.options_button.setStyleSheet("""
+                QPushButton {
+                    background-color: #000080;
+                    color: white;
+                    border: none;
+                    border-radius: 10px;
+                    padding: 15px 30px;
+                    font-size: 18px;
+                    min-width: 250px;
+                }
+                QPushButton:hover {
+                    background-color: #191970; /* Darken color on hover */
+                }
+            """)
+            layout.addWidget(self.options_button)
+            self.options_button.clicked.connect(self.toggle_options_frame)
+
+            # options Frame (initially hidden)
+            self.options_frame = QFrame(self)
+            self.options_frame.setFrameShape(QFrame.StyledPanel)
+            self.options_frame.setFixedWidth(400)
+            self.options_frame.setFixedHeight(200)
+            self.options_frame.move(530, 300)  # Center position
+            self.options_frame.hide()
+
+            frame_layout = QVBoxLayout(self.options_frame)
+            self.mute_button = QPushButton('Mute', self.options_frame)  # Save as an attribute
+            self.mute_button.clicked.connect(self.toggle_mute)
+            frame_layout.addWidget(self.mute_button)
+
+            restart_button = QPushButton('Restart Game', self.options_frame)
+            restart_button.clicked.connect(self.restart_game)
+            frame_layout.addWidget(restart_button)
 
         except Exception as e:
             self.text_browser.append(f"Error in initUI: {e}")
@@ -116,6 +155,34 @@ class InteractivePromptGUI(QMainWindow):
             self.text_browser.append(f"Error in process_input: {e}")
 
 
+
+    def toggle_options_frame(self):
+        self.options_frame.setVisible(not self.options_frame.isVisible())
+
+    def restart_game(self):
+        # Clear all game-related text and inputs
+        self.text_browser.clear()
+        self.line_edit.clear()
+        self.line_edit.setEnabled(True)
+
+        # Reinitialize the game logic
+        self.game = ELIZAGame()
+        self.game_mode_selected = False
+
+        # Optionally reset other states, such as audio settings
+        self.setup_audio()  # If you want to restart the music or sounds
+
+        # Start a new game session
+        start_message = self.game.start_game()
+        self.text_browser.append(f"> ELIZA: {start_message}")
+
+    def toggle_mute(self):
+        self.is_muted = not self.is_muted
+        self.media_player.setMuted(self.is_muted)
+        self.mute_button.setText('Unmute' if self.is_muted else 'Mute')
+
+
+    # sets up audio       
     def setup_audio(self):
         # Create a media player
         self.media_player = QMediaPlayer()
