@@ -53,7 +53,7 @@ class InteractivePromptGUI(QMainWindow):
 
         # Text Browser for conversation
         self.text_browser = QTextBrowser(self)
-        self.text_browser.setStyleSheet('font-size: 36px; font-weight: bold; color: #FFFFFF; background: transparent')
+        self.text_browser.setStyleSheet('font-size: 36px; font-weight: bold; color: #FFFFFF; background: transparent; padding: 10px;')
 
         # Line Edit for input
         self.line_edit = QLineEdit(self)
@@ -81,10 +81,7 @@ class InteractivePromptGUI(QMainWindow):
         layout.addWidget(self.line_edit)
         layout.addWidget(self.push_button)
 
-        # Connect the Enter key press event to the button click event
-        self.line_edit.returnPressed.connect(self.push_button.click)
-
-    # Options Button
+        # Options Button
         self.options_button = QPushButton('Options', self)
         self.options_button.setStyleSheet("""
                 QPushButton {
@@ -122,6 +119,10 @@ class InteractivePromptGUI(QMainWindow):
         restart_button.setStyleSheet("background-color: white;")
         restart_button.clicked.connect(self.restart_game)
         frame_layout.addWidget(restart_button)
+
+        # Add margin to the text browser
+        layout.setContentsMargins(20, 20, 20, 20)
+
 
     def start_game(self):
         # Start the game by displaying a welcome message or similar initial action
