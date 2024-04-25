@@ -57,7 +57,7 @@ class InteractivePromptGUI(QMainWindow):
 
         # Line Edit for input
         self.line_edit = QLineEdit(self)
-        self.line_edit.setStyleSheet('background: transparent; color: #FFFFFF')
+        self.line_edit.setStyleSheet('background: transparent; color: #FFFFFF; font-size: 24px;')
         layout.addWidget(self.text_browser)
         layout.addWidget(self.line_edit)
 
