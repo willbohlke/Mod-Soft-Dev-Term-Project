@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QLineEdit, QTextBrowser
 
 from Similarity import Similarity  # You'll need to have the Similarity implementation
 from ELIZA_logic import ELIZAGame
-from gui import WorkerThread, InteractivePromptGUI
+from gui2 import WorkerThread, InteractivePromptGUI
 
 
 class TestELIZAGame(unittest.TestCase):
