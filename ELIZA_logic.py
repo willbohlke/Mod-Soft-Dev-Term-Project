@@ -96,7 +96,7 @@ class ELIZAGame():
             self.waiting_for_confirmation = True
             return f"Maximum number of questions reached. Is it {guess}?"
 
-        if score > 0.30:
+        if score > 0.25:
             self.waiting_for_confirmation = True
             self.last_guess = guess
             return f"Is it {guess}?"
