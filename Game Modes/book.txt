@@ -13,7 +13,7 @@ The Adventures of Huckleberry Finn
 The Diary of a Young Girl
 Brave New World
 Alice's Adventures in Wonderland
-The Chronicles of Narnia
+The Lion, the Witch and the Wardrobe
 The Grapes of Wrath
 The Hitchhiker's Guide to the Galaxy
 The Kite Runner
@@ -21,10 +21,13 @@ Gone with the Wind
 Frankenstein
 The Picture of Dorian Gray
 One Hundred Years of Solitude
-The Bell Jar
+Little Women
 Wuthering Heights
-Slaughterhouse-Five
+Great Expectations
 The Alchemist
-Anna Karenina
+Of Mice and Men
 The Secret Garden
 The Color Purple
+Dracula
+Lord of the Flies
+Animal Farm

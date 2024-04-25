@@ -1,8 +1,11 @@
 import unittest
 from unittest.mock import patch, MagicMock
+from PyQt5.QtWidgets import QLineEdit, QTextBrowser
 
 from Similarity import Similarity  # You'll need to have the Similarity implementation
 from ELIZA_logic import ELIZAGame
+from gui import WorkerThread, InteractivePromptGUI
+
 
 class TestELIZAGame(unittest.TestCase):
 
@@ -64,4 +67,37 @@ class SimilarityTests(unittest.TestCase):
         lemmatized_text = self.similarity.lemmatize_text(input_text)
         self.assertEqual(lemmatized_text, expected_output)
 
+class TestWorkerThread(unittest.TestCase):
+    def test_operation_done_signal(self):
+        game = MagicMock()  # Simple mock for the game object
+        thread = WorkerThread("", game)
+        result = ""
 
+        def set_result(output):
+            nonlocal result
+            result = output
+
+        thread.operation_done.connect(set_result)
+        thread.start()
+        thread.wait()  # Wait for the thread to finish
+
+        self.assertEqual(result, "")  # Or any expected output you set in your mock
+
+class TestInteractivePromptGUI(unittest.TestCase):
+    @patch('PyQt5.QtGui.QImage')  # Patch loading of the background image
+    def test_init_ui(self, mock_image):
+        gui = InteractivePromptGUI()
+        # Assertions to check if UI elements are created, etc.
+        self.assertIsInstance(gui.text_browser, QTextBrowser)
+        self.assertIsInstance(gui.line_edit, QLineEdit)
+
+    def test_start_game(self):
+        gui = InteractivePromptGUI()
+        game_mock = MagicMock()
+        game_mock.start_game.return_value = "Welcome to ELIZA!"
+        gui.game = game_mock  # Inject the mock
+
+        gui.start_game()
+
+        # Assert the text browser is updated with the welcome message
+        self.assertEqual(gui.text_browser.toPlainText(), "Welcome to ELIZA!")

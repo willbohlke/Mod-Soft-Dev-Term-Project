@@ -20,25 +20,25 @@ class ELIZAGame():
         # question bank
         self.question_bank = {
             'film': [
-                "What genre is the film?",
-                "Who directed the film?",
-                "Who are the main actors in the film?",
+                "Tell me about the genre of the film.",
+                "Who are some people who worked on the film?",
+                "Who are the main actors or character in the film?",
                 "When was the film released?",
-                "Is the film part of a series or franchise?",
+                "What series or franchise is the film part of?"
             ],
             'book': [
-                "What genre is the book?",
-                "Who is the author of the book?",
+                "Tell me about the genre of the book.",
+                "Who is the author of the book? Have they written anything else?",
                 "When was the book published?",
-                "Is the book part of a series?",
-                "What is the main theme of the book?",
+                "What series is the book part of? Or is it a stand-alone?",
+                "What is the main theme of the book?"
             ],
             'celebrity': [
                 "What is the profession of the celebrity?",
-                "Is the celebrity known for a particular role?",
-                "Is the celebrity known for a particular event?",
-                "Is the celebrity known for a particular achievement?",
-                "Is the celebrity known for a particular controversy?",
+                "What gender is this celebrity?",
+                "What kind of roles has this celebrity had?",
+                "What events are this celebrity known for?",
+                "What achievements does this celebrity have?"
             ]
         }
 

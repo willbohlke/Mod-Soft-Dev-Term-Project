@@ -85,6 +85,11 @@ class InteractivePromptGUI(QMainWindow):
                 self.game = ELIZAGame()  # Restart the game
                 self.game_just_started = True
                 return
+            elif user_input.lower() in ['no', 'n', 'not quite', 'not really', 'incorrect', 'wrong']:
+                self.text_browser.append("> ELIZA: Sorry, I couldn't guess it. Let's play again. Please select a category.")
+                self.game = ELIZAGame()  # Restart the game
+                self.game_just_started = True
+                return
             else:
                 self.game.waiting_for_confirmation = False
                 self.game.last_guess = None
