@@ -5,7 +5,7 @@ This is our guessing program based on the original ELIZA script. The user can lo
 ## Requirements (Run these in the terminal of your environment before using):
 
 ```python
-pip install pytest #For unit testing
+pip install unittest #For unit testing
 pip install wikipedia-api #This api fetches descriptions of the objects loaded from the .txt file
 pip install -U scikit-learn #Used for NLP to calculate cosign similarity
 pip install spacy #Provides lemmatization in the NLP process
